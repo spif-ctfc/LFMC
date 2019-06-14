@@ -11,5 +11,6 @@ Description: An R package to manage the live fuel moisture content (LFMC) databa
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.4.0), RSQLite
+Depends: R (>= 3.4.0), DBI, RSQLite
 VignetteBuilder: utils, knitr
+RoxygenNote: 6.1.1
