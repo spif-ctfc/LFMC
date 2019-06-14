@@ -13,31 +13,53 @@ init_DB<-function(file, overwrite = FALSE) {
   if(!endsWith(file, ".sqlite")) file = paste0(file, ".sqlite")
   if(file.exists(file)) {
     if(!overwrite) stop(paste0("Database file '", file, "' already exists. Set 'overwrite = TRUE' to force overwriting the database."))
-    else cat(paste0("Database file '", file, "' overwritten."))
+    unlink(file)
+    cat(paste0("Database file '", file, "' overwritten.\n"))
   } else {
-    cat(paste0("New database file '", file, "' created."))
+    cat(paste0("New database file '", file, "' created.\n"))
   }
-  lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), file, overwrite = overwrite)
+  lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), file)
 
   ## Init empty tables
-  agents = data.frame(AgentCode = NA, AgentName = NA, County = NA)
-  dbWriteTable(lfmc_db, "agents", agents, overwrite = overwrite)
+  int_type = dbDataType(lfmc_db, as.integer(1996))
+  dbl_type = dbDataType(lfmc_db, 1.2)
+  txt_type = dbDataType(lfmc_db, "abc")
+  date_type = dbDataType(lfmc_db, Sys.Date())
+  time_type = dbDataType(lfmc_db, Sys.time())
 
-  plots = data.frame(PlotCode = NA, SiteCode = NA, UTM_x = NA, UTM_y = NA, MeanHeight= NA, MeanCover = NA,
-                     StartYear = NA, EndYear = NA)
-  dbWriteTable(lfmc_db, "plots", plots, overwrite = overwrite)
+  agent_vars =  c("AgentCode" = int_type,
+                  "AgentName" = txt_type,
+                  "County" = txt_type)
+  dbCreateTable(lfmc_db, "agents",agent_vars)
 
-  sites = data.frame(SiteCode = NA, CurrentPlotCode = NA, County = NA, Town = NA, TownCode = NA, Place = NA, Species1 = NA, Species2 = NA, Species3 = NA)
-  dbWriteTable(lfmc_db, "sites", sites, overwrite = overwrite)
+  plot_vars = c(PlotCode = int_type, SiteCode = int_type,
+                UTM_x = dbl_type, UTM_y = dbl_type,
+                MeanHeight= dbl_type, MeanCover = dbl_type,
+                StartYear = int_type, EndYear = int_type)
+  dbCreateTable(lfmc_db, "plots", plot_vars)
 
-  species = data.frame(SpeciesCode = NA, Genus = NA, Species = NA)
-  dbWriteTable(lfmc_db, "species", species, overwrite = overwrite)
+  site_vars = c(SiteCode = int_type,
+                CurrentPlotCode = int_type,
+                County = txt_type,
+                Town = txt_type,
+                Place = txt_type,
+                Species1Code = int_type, Species2Code = int_type, Species3Code = int_type)
+  dbCreateTable(lfmc_db, "sites", site_vars)
 
-  lfmc = data.frame(SiteCode = NA, AgentCode = NA, SpeciesCode = NA, Date = NA, DryMass = NA, LFMC = NA)
-  dbWriteTable(lfmc_db, "lfmc", lfmc, overwrite = overwrite)
+  species_vars = c(SpeciesCode = int_type, Genus = txt_type, Species = txt_type)
+  dbCreateTable(lfmc_db, "species", species_vars)
 
-  soilmoisture = data.frame(SiteCode = NA, Date = NA, Time = NA, TopTemp = NA, BottomTemp = NA, TopMoisture = NA, BottomMoisture = NA)
-  dbWriteTable(lfmc_db, "soilmoisture", soilmoisture, overwrite = overwrite)
+  lfmc_vars = c(SiteCode = int_type, AgentCode = int_type, SpeciesCode = int_type,
+                Date = date_type, DryMass = dbl_type, LFMC = dbl_type)
+  dbCreateTable(lfmc_db, "lfmc", lfmc_vars)
+
+  soilmoisture_vars = c(SiteCode = int_type,
+                        Date = date_type, Time = time_type,
+                        TopTemp = dbl_type, BottomTemp = dbl_type,
+                        TopMoisture = dbl_type, BottomMoisture = dbl_type)
+  dbCreateTable(lfmc_db, "soilmoisture", soilmoisture_vars)
 
   DBI::dbDisconnect(lfmc_db)
+
+  set_DBpath(file)
 }

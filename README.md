@@ -4,7 +4,7 @@ LFMC
 ## Introduction
 
 Package **LFMC** is designed to assist the creation, management and
-exploitation of the fine fuel moisture content (LFMC) database of the
+analysis of the fine fuel moisture content (LFMC) database of the
 *Servei de Prevenció d’Incendis* (SPIF) of the Catalan administration.
 
 ## Package installation
