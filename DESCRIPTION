@@ -1,0 +1,14 @@
+Package: LFMC
+Type: Package
+Title: Live Fuel Moisture Content Data Management
+Version: 0.1.0
+Authors@R: c(
+	person('Miquel', 'De Cáceres', role=c('aut','cre'),
+	email='miquelcaceres@gmail.com'),
+	person('Eva', 'Gabriel', role='aut'),
+	person('Pere', 'Casals', role='aut'))
+Description: An r package to manage the live fuel moisture content (LFMC) database of the Catalan "Servei de Prevencio d'Incendis" (SPIF)
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.4.0), RSQLite
