@@ -28,8 +28,7 @@ init_DB<-function(file, overwrite = FALSE) {
   time_type = dbDataType(lfmc_db, Sys.time())
 
   agent_vars =  c("AgentCode" = int_type,
-                  "AgentName" = txt_type,
-                  "County" = txt_type)
+                  "AgentName" = txt_type)
   dbCreateTable(lfmc_db, "agents",agent_vars)
 
   plot_vars = c(PlotCode = int_type, SiteCode = int_type,
@@ -50,7 +49,10 @@ init_DB<-function(file, overwrite = FALSE) {
   dbCreateTable(lfmc_db, "species", species_vars)
 
   lfmc_vars = c(SiteCode = int_type, AgentCode = int_type, SpeciesCode = int_type,
-                Date = date_type, DryMass = dbl_type, LFMC = dbl_type)
+                Date = date_type,
+                PhenologyStatusCode = int_type, PhenologySystem = txt_type,
+                DryMass = dbl_type, DryStem = dbl_type, DryLeaf = dbl_type,
+                LFMC = dbl_type)
   dbCreateTable(lfmc_db, "lfmc", lfmc_vars)
 
   soilmoisture_vars = c(SiteCode = int_type,
