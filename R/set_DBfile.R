@@ -1,3 +1,11 @@
+#' Specifies the LFMC database file
+#'
+#' @param file A string with the path to a *.sqlite file
+#'
+#' @return
+#' @export
+#'
+#' @examples
 set_DBpath<-function(file){
   if(file.exists(file)) {
     assign("lfmcdbfile", normalizePath(file), envir = .GlobalEnv)

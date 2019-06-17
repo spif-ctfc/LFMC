@@ -4,10 +4,13 @@
 \alias{init_DB}
 \title{Initializes an empty LFMC database with the appropriate database structure on a new file}
 \usage{
-init_DB(file, overwrite = FALSE)
+init_DB(file, thesaurus_xlsx = NULL, overwrite = FALSE)
 }
 \arguments{
 \item{file}{Database filename}
+
+\item{thesaurus_xlsx}{Excel 'xlsx' file with thesaurus tables for 'plots',
+'sites', 'species' and 'agents'.}
 
 \item{overwrite}{Boolean flag to force overwritting an existing file}
 }
@@ -16,6 +19,6 @@ Initializes an empty LFMC database with the appropriate database structure on a 
 }
 \examples{
 
-init_DB("../lfmc")
+init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
 
 }
