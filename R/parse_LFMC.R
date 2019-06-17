@@ -95,6 +95,14 @@ parse_LFMC<-function(lfmc_xlsx, dateIni = NULL, dateFin = NULL, dateFormat = "%d
     if(varmapping[["Notes"]] %in% names(lfmc)) lfmc_df[["Notes"]] = lfmc[[varmapping[["Notes"]]]]
   }
 
+  #remove records with missing SampleCode
+  missing_code = is.na(lfmc_df$SampleCode)
+  if(sum(missing_code)>0) {
+    cat(paste0(sum(missing_code), " records discarded because of missing SampleCode values.\n"))
+    lfmc_df = lfmc_df[!missing_code,]
+  }
+
+
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   lfmc_table = dbReadTable(lfmc_db, "lfmc")
   existing = lfmc_df$SampleCode %in% lfmc_table$SampleCode
