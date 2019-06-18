@@ -2,7 +2,7 @@
 % Please edit documentation in R/set_DBfile.R
 \name{set_DBpath}
 \alias{set_DBpath}
-\title{Specifies the LFMC database file}
+\title{Set the LFMC database file}
 \usage{
 set_DBpath(file)
 }
@@ -10,5 +10,10 @@ set_DBpath(file)
 \item{file}{A string with the path to a *.sqlite file}
 }
 \description{
-Specifies the LFMC database file
+Specifies the location of the LFMC database file. This causes setting global variable \code{lfmcdbfile}.
+}
+\examples{
+\dontrun{
+   set_DBpath("../lfmc.sqlite")
+}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/init_DB.R
 \name{init_DB}
 \alias{init_DB}
-\title{Initializes an empty LFMC database with the appropriate database structure on a new file}
+\title{Initialize LFMC database}
 \usage{
 init_DB(file, thesaurus_xlsx = NULL, overwrite = FALSE)
 }
@@ -19,6 +19,9 @@ Initializes an empty LFMC database with the appropriate database structure on a 
 }
 \examples{
 
-init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
+\dontrun{
+  init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
+}
+
 
 }

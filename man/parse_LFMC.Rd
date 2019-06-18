@@ -2,9 +2,9 @@
 % Please edit documentation in R/parse_LFMC.R
 \name{parse_LFMC}
 \alias{parse_LFMC}
-\title{Reads LFMC data from an excel file}
+\title{Parse LFMC data}
 \usage{
-parse_LFMC(lfmc_xlsx, dateIni = NULL, dateFin = NULL,
+parse_LFMC(lfmc, dateIni = NULL, dateFin = NULL,
   dateFormat = "\%d/\%m/\%Y", varmapping = c(Date = "DATA", SiteCode =
   "CODI_PARCELA", SpeciesCAT = "ESPECIE", SampleCode = "NUM_MOSTRA",
   FreshMass = "PES_FRESC", DryMass = "PES_SEC", LFMC = "HUMITAT", DryStem =
@@ -12,8 +12,23 @@ parse_LFMC(lfmc_xlsx, dateIni = NULL, dateFin = NULL,
   overwrite = FALSE)
 }
 \arguments{
-\item{overwrite}{}
+\item{lfmc}{The data frame from which LFMC records are to be read}
+
+\item{dateIni}{String to indicate the earliest date to import (using format in \code{dateFormat})}
+
+\item{dateFin}{String to indicate the latest date to import (using format in \code{dateFormat})}
+
+\item{dateFormat}{String wiht date format (see \code{\link{as.Date}}).}
+
+\item{varmapping}{Named vector of variable mappings.}
+
+\item{overwrite}{Whether or not to overwrite existing records. LFMC records are uniquely identified
+with field 'SampleCode'.}
 }
 \description{
-Reads LFMC data from an excel file
+Parses LFMC records from a data frame
+}
+\examples{
+
+parse_LFMC(readxl::read_xlsx(lfmc_xlsx))
 }

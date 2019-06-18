@@ -1,17 +1,19 @@
-#' Reads LFMC data from an excel file
+#' Parse LFMC data
 #'
-#' @param lfmc_xlsx
-#' @param dateIni
-#' @param dateFin
-#' @param dateFormat
-#' @param varmapping
-#' @param overwrite
+#' Parses LFMC records from a data frame
 #'
-#' @return
-#' @export
+#' @param lfmc The data frame from which LFMC records are to be read
+#' @param dateIni String to indicate the earliest date to import (using format in \code{dateFormat})
+#' @param dateFin String to indicate the latest date to import (using format in \code{dateFormat})
+#' @param dateFormat String wiht date format (see \code{\link{as.Date}}).
+#' @param varmapping Named vector of variable mappings.
+#' @param overwrite Whether or not to overwrite existing records. LFMC records are uniquely identified
+#' with field 'SampleCode'.
 #'
 #' @examples
-parse_LFMC<-function(lfmc_xlsx, dateIni = NULL, dateFin = NULL, dateFormat = "%d/%m/%Y",
+#'
+#' parse_LFMC(readxl::read_xlsx(lfmc_xlsx))
+parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%d/%m/%Y",
                      varmapping = c("Date" = "DATA",
                                     "SiteCode"  = "CODI_PARCELA",
                                     "SpeciesCAT" = "ESPECIE",
@@ -24,7 +26,6 @@ parse_LFMC<-function(lfmc_xlsx, dateIni = NULL, dateFin = NULL, dateFormat = "%d
                                     "Notes" = "Observacions"),
                      overwrite = FALSE) {
 
-  lfmc = readxl::read_xlsx(lfmc_xlsx)
   dates = as.Date(lfmc[[varmapping[["Date"]]]], format = dateFormat)
   sel = rep(T, nrow(lfmc))
   if(!is.null(dateIni)) {

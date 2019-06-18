@@ -1,3 +1,5 @@
+#' Initialize LFMC database
+#'
 #' Initializes an empty LFMC database with the appropriate database structure on a new file
 #'
 #' @param file Database filename
@@ -5,11 +7,12 @@
 #'                      'sites', 'species' and 'agents'.
 #' @param overwrite Boolean flag to force overwritting an existing file
 #'
-#' @return NULL
-#'
 #' @examples
 #'
-#' init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
+#' \dontrun{
+#'   init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
+#' }
+#'
 #'
 init_DB<-function(file, thesaurus_xlsx =NULL, overwrite = FALSE) {
   if(!endsWith(file, ".sqlite")) file = paste0(file, ".sqlite")
