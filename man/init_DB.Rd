@@ -20,7 +20,7 @@ Initializes an empty LFMC database with the appropriate database structure on a 
 \examples{
 
 \dontrun{
-  init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
+  init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx", overwrite=TRUE)
 }
 
 

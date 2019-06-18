@@ -17,6 +17,6 @@ Exports whole LFMC data base into an excel (*.xlsx) file
 \examples{
 
 \dontrun{
-  export_xlsx("../lfmc_backup.xlsx")
+  export_xlsx("../lfmc_backup.xlsx", overwrite = T)
 }
 }

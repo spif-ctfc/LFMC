@@ -8,7 +8,7 @@
 #' @examples
 #'
 #' \dontrun{
-#'   export_xlsx("../lfmc_backup.xlsx")
+#'   export_xlsx("../lfmc_backup.xlsx", overwrite = T)
 #' }
 export_xlsx<-function(xlsxfile, overwrite = FALSE) {
   if(!endsWith(xlsxfile, ".xlsx")) xlsxfile = paste0(xlsxfile, ".xlsx")

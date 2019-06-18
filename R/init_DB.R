@@ -10,7 +10,7 @@
 #' @examples
 #'
 #' \dontrun{
-#'   init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx")
+#'   init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx", overwrite=TRUE)
 #' }
 #'
 #'
@@ -54,16 +54,16 @@ init_DB<-function(file, thesaurus_xlsx =NULL, overwrite = FALSE) {
     species_vars = c(SpeciesCode = int_type, Genus = txt_type, Species = txt_type)
     dbCreateTable(lfmc_db, "species", species_vars)
   } else {
-    sitesTable = readxl::read_xlsx(thesaurus_xlsx, sheet = "sites")
+    sitesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "sites")
     dbWriteTable(lfmc_db, "sites", sitesTable)
 
-    plotsTable = readxl::read_xlsx(thesaurus_xlsx, sheet = "plots")
+    plotsTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "plots")
     dbWriteTable(lfmc_db, "plots", plotsTable)
 
-    speciesTable = readxl::read_xlsx(thesaurus_xlsx, sheet = "species")
+    speciesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "species")
     dbWriteTable(lfmc_db, "species", speciesTable)
 
-    agentsTable = readxl::read_xlsx(thesaurus_xlsx, sheet = "agents")
+    agentsTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "agents")
     dbWriteTable(lfmc_db, "agents", agentsTable)
   }
 

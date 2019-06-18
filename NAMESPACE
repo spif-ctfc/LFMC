@@ -1,4 +1,3 @@
 exportPattern("^[[:alpha:]]+")
 
-importFrom("readxl", "read_xlsx")
-importFrom("openxlsx", "createWorkbook", "addWorksheet", "writeDataTable", "saveWorkbook")
+importFrom("openxlsx","read.xlsx","createWorkbook", "addWorksheet", "writeDataTable", "saveWorkbook")

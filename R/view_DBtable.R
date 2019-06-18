@@ -10,5 +10,4 @@ extract_DBtable<-function(tablename = "lfmc") {
 
 view_DBtable<-function(tablename = "lfmc") {
   View(extract_DBtable(tablename), tablename)
-  dbDisconnect(lfmc_db)
 }
