@@ -5,7 +5,7 @@
 \title{Parse LFMC data}
 \usage{
 parse_LFMC(lfmc, dateIni = NULL, dateFin = NULL,
-  dateFormat = "\%d/\%m/\%Y", varmapping = c(Date = "DATA", SiteCode =
+  dateFormat = "\%Y-\%m-\%d", varmapping = c(Date = "DATA", SiteCode =
   "CODI_PARCELA", SpeciesCAT = "ESPECIE", SampleCode = "NUM_MOSTRA",
   FreshMass = "PES_FRESC", DryMass = "PES_SEC", LFMC = "HUMITAT", DryStem =
   "PES_TIGES", DryLeaf = "PES_FULLES", Notes = "Observacions"),
@@ -18,7 +18,7 @@ parse_LFMC(lfmc, dateIni = NULL, dateFin = NULL,
 
 \item{dateFin}{String to indicate the latest date to import (using format in \code{dateFormat})}
 
-\item{dateFormat}{String wiht date format (see \code{\link{as.Date}}).}
+\item{dateFormat}{String with date format (see \code{\link{as.Date}}).}
 
 \item{varmapping}{Named vector of variable mappings.}
 
@@ -29,6 +29,27 @@ with field 'SampleCode'.}
 Parses LFMC records from a data frame
 }
 \examples{
+\dontrun{
+# Init DB using excel file with thesaurus tables (agents, species, plots and sites)
 
-parse_LFMC(readxl::read_xlsx(lfmc_xlsx))
+init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx", overwrite = T)
+
+# Parse records from file "2019.xlsx"
+
+lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
+lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
+parse_LFMC(lfmc)
+
+
+# Parse records from another file using another (identity) mapping
+varmapping2 = c("Date" = "Date", "SiteCode"  = "SiteCode",
+                "SpeciesCode" = "SpeciesCode", "SampleCode" = "SampleCode",
+                "FreshMass" = "FreshMass", "DryMass" = "DryMass",
+                "DryStem" = "DryStem", "DryLeaf" = "DryLeaf",
+                "LFMC" = "LFMC")
+lfmc2 = openxlsx::read.xlsx("../LFMC_spif/LFMC_raw_table_Miquel.xlsx")
+lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
+parse_LFMC(lfmc2, varmapping = varmapping2)
+}
+
 }

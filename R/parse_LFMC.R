@@ -5,15 +5,36 @@
 #' @param lfmc The data frame from which LFMC records are to be read
 #' @param dateIni String to indicate the earliest date to import (using format in \code{dateFormat})
 #' @param dateFin String to indicate the latest date to import (using format in \code{dateFormat})
-#' @param dateFormat String wiht date format (see \code{\link{as.Date}}).
+#' @param dateFormat String with date format (see \code{\link{as.Date}}).
 #' @param varmapping Named vector of variable mappings.
 #' @param overwrite Whether or not to overwrite existing records. LFMC records are uniquely identified
 #' with field 'SampleCode'.
 #'
 #' @examples
+#' \dontrun{
+#' # Init DB using excel file with thesaurus tables (agents, species, plots and sites)
 #'
-#' parse_LFMC(readxl::read_xlsx(lfmc_xlsx))
-parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%d/%m/%Y",
+#' init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx", overwrite = T)
+#'
+#' # Parse records from file "2019.xlsx"
+#'
+#' lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
+#' lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
+#' parse_LFMC(lfmc)
+#'
+#'
+#' # Parse records from another file using another (identity) mapping
+#' varmapping2 = c("Date" = "Date", "SiteCode"  = "SiteCode",
+#'                 "SpeciesCode" = "SpeciesCode", "SampleCode" = "SampleCode",
+#'                 "FreshMass" = "FreshMass", "DryMass" = "DryMass",
+#'                 "DryStem" = "DryStem", "DryLeaf" = "DryLeaf",
+#'                 "LFMC" = "LFMC")
+#' lfmc2 = openxlsx::read.xlsx("../LFMC_spif/LFMC_raw_table_Miquel.xlsx")
+#' lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
+#' parse_LFMC(lfmc2, varmapping = varmapping2)
+#' }
+#'
+parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%d",
                      varmapping = c("Date" = "DATA",
                                     "SiteCode"  = "CODI_PARCELA",
                                     "SpeciesCAT" = "ESPECIE",
@@ -26,7 +47,10 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%d/%m/%
                                     "Notes" = "Observacions"),
                      overwrite = FALSE) {
 
-  dates = as.Date(lfmc[[varmapping[["Date"]]]], format = dateFormat)
+  dates = lfmc[[varmapping[["Date"]]]]
+  if(class(dates)!="Date") {
+    dates = as.Date(dates, format = dateFormat)
+  }
   sel = rep(T, nrow(lfmc))
   if(!is.null(dateIni)) {
     dateIni = as.Date(dateIni, format = dateFormat)
@@ -129,7 +153,7 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%d/%m/%
     dbWriteTable(lfmc_db, "lfmc", lfmc_table)
   }
   nnew = dbAppendTable(lfmc_db, "lfmc", lfmc_new)
-  cat(paste0(nnew, " new LFMC records added.\n"))
+  cat(paste0(nnew, " new LFMC records added to database.\n"))
 
   dbDisconnect(lfmc_db)
 }
