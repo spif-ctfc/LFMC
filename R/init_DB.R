@@ -70,8 +70,10 @@ init_DB<-function(file, thesaurus_xlsx =NULL, overwrite = FALSE) {
   lfmc_vars = c(SiteCode = int_type, AgentCode = int_type, SpeciesCode = int_type,
                 Date = date_type, SampleCode = txt_type,
                 FreshMass = dbl_type,
-                DryMass = dbl_type, DryStem = dbl_type, DryLeaf = dbl_type,
+                DryMass = dbl_type,
                 LFMC = dbl_type,
+                DryStem = dbl_type, DryLeaf = dbl_type,
+                LeafStemRatio = dbl_type,
                 PhenologyCode = int_type, PhenologySystem = int_type,
                 Notes = txt_type)
   dbCreateTable(lfmc_db, "lfmc", lfmc_vars)

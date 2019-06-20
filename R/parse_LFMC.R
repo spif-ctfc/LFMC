@@ -10,6 +10,9 @@
 #' @param overwrite Whether or not to overwrite existing records. LFMC records are uniquely identified
 #' with field 'SampleCode'.
 #'
+#' @details Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values, but can
+#' be also mapped (data integrity is then user's responsibility).
+#'
 #' @examples
 #' \dontrun{
 #' # Init DB using excel file with thesaurus tables (agents, species, plots and sites)
@@ -27,8 +30,7 @@
 #' varmapping2 = c("Date" = "Date", "SiteCode"  = "SiteCode",
 #'                 "SpeciesCode" = "SpeciesCode", "SampleCode" = "SampleCode",
 #'                 "FreshMass" = "FreshMass", "DryMass" = "DryMass",
-#'                 "DryStem" = "DryStem", "DryLeaf" = "DryLeaf",
-#'                 "LFMC" = "LFMC")
+#'                 "DryStem" = "DryStem", "DryLeaf" = "DryLeaf")
 #' lfmc2 = openxlsx::read.xlsx("../LFMC_spif/LFMC_raw_table_Miquel.xlsx")
 #' lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
 #' parse_LFMC(lfmc2, varmapping = varmapping2)
@@ -41,7 +43,6 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
                                     "SampleCode" = "NUM_MOSTRA",
                                     "FreshMass" = "PES_FRESC",
                                     "DryMass" = "PES_SEC",
-                                    "LFMC" = "HUMITAT",
                                     "DryStem" = "PES_TIGES",
                                     "DryLeaf" = "PES_FULLES",
                                     "Notes" = "Observacions"),
@@ -68,8 +69,10 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
   lfmc_df = data.frame(SiteCode = rep(NA,n), AgentCode = rep(NA, n), SpeciesCode = rep(NA, n),
                 Date = rep(NA, n), SampleCode = rep(NA, n),
                 FreshMass = rep(NA, n),
-                DryMass = rep(NA, n), DryStem = rep(NA, n), DryLeaf = rep(NA, n),
+                DryMass = rep(NA, n),
                 LFMC = rep(NA, n),
+                DryStem = rep(NA, n), DryLeaf = rep(NA, n),
+                LeafStemRatio = rep(NA, n),
                 PhenologyCode = rep(NA, n), PhenologySystem = rep(NA, n))
 
 
@@ -104,6 +107,13 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
     if(varmapping[["DryMass"]] %in% names(lfmc)) lfmc_df[["DryMass"]] = as.numeric(lfmc[[varmapping[["DryMass"]]]])
   }
 
+
+  if("LFMC" %in% names(varmapping)) {
+    if(varmapping[["LFMC"]] %in% names(lfmc)) lfmc_df[["LFMC"]] = as.numeric(lfmc[[varmapping[["LFMC"]]]])
+  } else {
+    lfmc_df[["LFMC"]] = 100*(lfmc_df[["FreshMass"]] - lfmc_df[["DryMass"]])/lfmc_df[["DryMass"]]
+  }
+
   if("DryStem" %in% names(varmapping)) {
     if(varmapping[["DryStem"]] %in% names(lfmc)) lfmc_df[["DryStem"]] = as.numeric(lfmc[[varmapping[["DryStem"]]]])
   }
@@ -112,8 +122,10 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
     if(varmapping[["DryLeaf"]] %in% names(lfmc)) lfmc_df[["DryLeaf"]] = as.numeric(lfmc[[varmapping[["DryLeaf"]]]])
   }
 
-  if("LFMC" %in% names(varmapping)) {
-    if(varmapping[["LFMC"]] %in% names(lfmc)) lfmc_df[["LFMC"]] = as.numeric(lfmc[[varmapping[["LFMC"]]]])
+  if("LeafStemRatio" %in% names(varmapping)) {
+    if(varmapping[["LeafStemRatio"]] %in% names(lfmc)) lfmc_df[["LeafStemRatio"]] = as.numeric(lfmc[[varmapping[["LeafStemRatio"]]]])
+  } else {
+    lfmc_df[["LeafStemRatio"]] = lfmc_df[["DryLeaf"]]/lfmc_df[["DryStem"]]
   }
 
   if("Notes" %in% names(varmapping)) {
