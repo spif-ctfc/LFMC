@@ -31,7 +31,12 @@ Parses LFMC records from a data frame
 Mapping should be provided for at least for 'Date', 'SiteCode', 'SampleCode' and either 'SpeciesCode' or 'SpeciesCAT'.
 If mapping for 'SpeciesCode' is supplied, then 'SpeciesCAT' is not used.
 Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values, but can
-be also mapped (data integrity is then user's responsibility).
+be also mapped (data integrity is then user's responsibility). Variable for 'Date' can be of class \code{\link{Date}} or
+a string. In the latter case date strings are expected to be in \code{dateFormat}.
+
+Records with missing 'SampleCode' are discarded. Records already existing in the data base (i.e. records
+corresponding to existing 'SampleCode' values) are also discarded, unless \code{overwrite = TRUE}. This
+allows adding only new records even if the input data frame contains records already existing in the database.
 }
 \examples{
 \dontrun{
