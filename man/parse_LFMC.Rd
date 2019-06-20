@@ -19,7 +19,7 @@ parse_LFMC(lfmc, dateIni = NULL, dateFin = NULL,
 
 \item{dateFormat}{String with date format (see \code{\link{as.Date}}).}
 
-\item{varmapping}{Named vector of variable mappings.}
+\item{varmapping}{Named vector of variable mappings (see details).}
 
 \item{overwrite}{Whether or not to overwrite existing records. LFMC records are uniquely identified
 with field 'SampleCode'.}
@@ -28,6 +28,8 @@ with field 'SampleCode'.}
 Parses LFMC records from a data frame
 }
 \details{
+Mapping should be provided for at least for 'Date', 'SiteCode', 'SampleCode' and either 'SpeciesCode' or 'SpeciesCAT'.
+If mapping for 'SpeciesCode' is supplied, then 'SpeciesCAT' is not used.
 Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values, but can
 be also mapped (data integrity is then user's responsibility).
 }
