@@ -10,14 +10,77 @@ vignette: >
 ---
 
 
-## Estructura de la base de dades
+## Database design and structure 
 
 
-![](LFMC.png)
+![](SPIF_ERD.png){width=130%}
 
-## Codificació de la fenologia
+![](SPIF_LogicalSchema.png){width=130%}
 
-### Sistema 1
+
+## Data dictionary
+
+The dictionary contains a description of the data included in the SPIF_LFMC database.  
+
+Fields:
+
+* Entity name
+* Variable: variable names by entity
+* Data type: sql data type per variable  
+* Description: a brief description and data restrictions 
+* Key 
+  - Primary key: unique row id
+  - Foreign key: column referencing the primary key from another entity (referenced entity)
+
+
+| Entity           | Variable       |	Data type |  Description                   | Key |
+|------------------|----------------|-----------|--------------------------------|-----|
+| SITE             | SitePlotcode   | integer   | not null, unique               | Primary Key |
+|                  | UTM_x          | float     |                                | NA |
+|                  | UTM_y          | float     |                                | NA |
+|                  | County         | varchar   |                                | NA |
+|                  | Town           | varchar   |                                | NA | 
+|                  | Place          | varchar   |                                | NA |
+|                  | StartYear      | integer   | year the plot was started      | NA | 
+|                  | EndYear        | integer   | year the plot was finalized    | NA | 
+| SPECIES          | SpeciesCode    | integer   | not null, unique               | Primary Key |
+|                  | SpeciesName    | varchar   | scientific name                | NA |
+|                  | SpeciesCAT     | varchar   | catalan common name            | NA | 
+| SITE_SPECIES     | SiteXSpecies   | integer   | not null, unique               | Primary Key |
+|                  | SitePlotCode   | integer   | not null                       |  Foreign Key |
+|                  | SpeciesCode    | integer   | not null                       |  Foreign Key |
+| LFMC             | SampleCode     | integer   | not null, unique              | Primary Key |
+|                  | SiteXSpecies   | integer   | not null                       |  Foreign Key |
+|                  | AgentCode      | integer   | LFMC data collector id         | NA | 
+|                  | Date           | date      |                                | NA |
+|                  | FreshMass      | float     |                                | NA | 
+|                  | DryMass        | float     |                                | NA | 
+|                  | LFMC           | float     |                                | NA | 
+|                  | DryStem        | float     |                                | NA | 
+|                  | DryLeaf        | float     |                                | NA | 
+|                  | LeafStemRatio  | float     |                                | NA | 
+|                  | Notes          | text      |                                | NA | 
+| PHENOLOGY        | PhenologyCode  | integer   | not null, unique | Primary Key |
+|                  | SiteXSpecies   | integer   | not null                       | Foreign Key |
+|                  | PhenologySystem| integer   | old method = 1, current method = 2, for more details see the section 'Phenology coding' below | NA |
+|                  | Phenology      | integer   |                                | NA | 
+| SOIL_TEMPERATURE | SensorCode     | integer   | not null, unique              | Primary Key |
+|                  | SiteCode       | integer   | not null                       | Foreign Key |
+|                  | Date           | date      |                                | NA |
+|                  | Time           | time      |                                | NA |
+|                  | Temperature    | float     | soil temperature measured at different depths | NA |
+| SOIL_MOISTURE    | SensorCode     | integer   | not null, unique               | Primary Key |
+|                  | SiteCode       | integer   | not null                       | Foreign Key |
+|                  | Date           | date      |                                | NA |
+|                  | Time           | time      |                                | NA |
+|                  | Moisture       | float     | soil moisture measured at different depths | NA |
+
+
+
+
+## Phenology coding
+
+### System 1
 
 | Codi |	Estat fenològic |
 |------|----------------------|
@@ -28,7 +91,7 @@ vignette: >
 | 5	| Maduració |
 
 
-### Sistema 2
+### System 2
 
 | Espècie | Codi | Estat fenològic           |
 |--------|------|----------------------|
