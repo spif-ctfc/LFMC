@@ -35,7 +35,7 @@ Fields:
 
 | Entity           | Variable       |	Data type |  Description                   | Key |
 |------------------|----------------|-----------|--------------------------------|-----|
-| SITE             | SitePlotcode   | integer   | not null, unique               | Primary Key |
+| SITES            | SitePlotcode   | integer   | not null, unique               | Primary Key |
 |                  | UTM_x          | float     |                                | NA |
 |                  | UTM_y          | float     |                                | NA |
 |                  | County         | varchar   |                                | NA |
@@ -46,11 +46,11 @@ Fields:
 | SPECIES          | SpeciesCode    | integer   | not null, unique               | Primary Key |
 |                  | SpeciesName    | varchar   | scientific name                | NA |
 |                  | SpeciesCAT     | varchar   | catalan common name            | NA | 
-| SITE_SPECIES     | SiteXSpecies   | integer   | not null, unique               | Primary Key |
-|                  | SitePlotCode   | integer   | not null                       |  Foreign Key |
-|                  | SpeciesCode    | integer   | not null                       |  Foreign Key |
-| LFMC             | SampleCode     | integer   | not null, unique              | Primary Key |
-|                  | SiteXSpecies   | integer   | not null                       |  Foreign Key |
+| SITES_SPECIES    | SiteXSpecies   | integer   | not null, unique               | Primary Key |
+|                  | SitePlotCode   | integer   | not null                       | Foreign Key |
+|                  | SpeciesCode    | integer   | not null                       | Foreign Key |
+| LFMC             | SampleCode     | integer   | not null, unique               | Primary Key |
+|                  | SiteXSpecies   | integer   | not null                       | Foreign Key |
 |                  | AgentCode      | integer   | LFMC data collector id         | NA | 
 |                  | Date           | date      |                                | NA |
 |                  | FreshMass      | float     |                                | NA | 
@@ -64,7 +64,7 @@ Fields:
 |                  | SiteXSpecies   | integer   | not null                       | Foreign Key |
 |                  | PhenologySystem| integer   | old method = 1, current method = 2, for more details see the section 'Phenology coding' below | NA |
 |                  | Phenology      | integer   |                                | NA | 
-| SOIL_TEMPERATURE | SensorCode     | integer   | not null, unique              | Primary Key |
+| SOIL_TEMPERATURE | SensorCode     | integer   | not null, unique               | Primary Key |
 |                  | SiteCode       | integer   | not null                       | Foreign Key |
 |                  | Date           | date      |                                | NA |
 |                  | Time           | time      |                                | NA |
