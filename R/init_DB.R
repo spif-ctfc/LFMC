@@ -3,8 +3,7 @@
 #' Initializes an empty LFMC database with the appropriate database structure on a new file
 #'
 #' @param file Database filename
-#' @param thesaurus_xlsx Excel 'xlsx' file with thesaurus tables for 'plots',
-#'                      'sites', 'species' and 'agents'.
+#' @param thesaurus_xlsx Excel 'xlsx' file with thesaurus tables for 'sites' and 'species'
 #' @param overwrite Boolean flag to force overwritting an existing file
 #'
 #' @examples
@@ -14,7 +13,7 @@
 #' }
 #'
 #'
-init_DB<-function(file, thesaurus_xlsx =NULL, overwrite = FALSE) {
+init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
   if(!endsWith(file, ".sqlite")) file = paste0(file, ".sqlite")
   if(file.exists(file)) {
     if(!overwrite) stop(paste0("Database file '", file, "' already exists. Set 'overwrite = TRUE' to force overwriting the database."))
@@ -23,69 +22,99 @@ init_DB<-function(file, thesaurus_xlsx =NULL, overwrite = FALSE) {
   } else {
     cat(paste0("New database file '", file, "' created.\n"))
   }
+
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), file)
 
   ## Init empty tables
-  int_type = dbDataType(lfmc_db, as.integer(1996))
-  dbl_type = dbDataType(lfmc_db, 1.2)
-  txt_type = dbDataType(lfmc_db, "abc")
-  date_type = dbDataType(lfmc_db, Sys.Date())
-  time_type = dbDataType(lfmc_db, Sys.time())
 
   if(is.null(thesaurus_xlsx)) {
-    agent_vars =  c("AgentCode" = int_type,
-                    "AgentName" = txt_type)
-    dbCreateTable(lfmc_db, "agents",agent_vars)
 
-    plot_vars = c(PlotCode = int_type, SiteCode = int_type,
-                  UTM_x = dbl_type, UTM_y = dbl_type,
-                  MeanHeight= dbl_type, MeanCover = dbl_type,
-                  StartYear = int_type, EndYear = int_type)
-    dbCreateTable(lfmc_db, "plots", plot_vars)
+    dbSendStatement(lfmc_db, "CREATE TABLE sites
+                    (
+                    SitePloteCode INTEGER PRIMARY KEY,
+                    UTM_x FLOAT,
+                    UTM_y FLOAT,
+                    County VARCHAR(50),
+                    Town VARCHAR(50),
+                    Place VARCHAR(50),
+                    StartYear INTEGER,
+                    EndYear INTEGER
+                    )")
 
-    site_vars = c(SiteCode = int_type,
-                  CurrentPlotCode = int_type,
-                  County = txt_type,
-                  Town = txt_type,
-                  Place = txt_type,
-                  Species1Code = int_type, Species2Code = int_type, Species3Code = int_type)
-    dbCreateTable(lfmc_db, "sites", site_vars)
-
-    species_vars = c(SpeciesCode = int_type, Genus = txt_type, Species = txt_type)
-    dbCreateTable(lfmc_db, "species", species_vars)
+    dbSendStatement(lfmc_db, "CREATE TABLE species
+                    (
+                    SpeciesCode INTEGER PRIMARY KEY,
+                    SpeciesName VARCHAR(50),
+                    SpeciesCAT VARCHAR(50)
+                    )")
   } else {
-    sitesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "sites")
-    dbWriteTable(lfmc_db, "sites", sitesTable)
+    site_vars = c(SitePlotCode = c("INTEGER", "PRIMARY KEY"),
+                  UTM_x = "FLOAT",
+                  UTM_y = "FLOAT",
+                  County = "VARCHAR(50)",
+                  Town = "VARCHAR(50)",
+                  Place = "VARCHAR(50)",
+                  StartYear = "INTEGER",
+                  EndYear = "INTEGER")
 
-    plotsTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "plots")
-    dbWriteTable(lfmc_db, "plots", plotsTable)
+    sitesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "sites")
+    dbWriteTable(lfmc_db, "sites", sitesTable, field.types = site_vars)
+
+    species_vars = c(SpeciesCode = c("INTEGER", "PRIMARY KEY"),
+                     SpeciesName = "VARCHAR(50)",
+                     SpeciesCAT = "VARCHAR(50)")
 
     speciesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "species")
-    dbWriteTable(lfmc_db, "species", speciesTable)
-
-    agentsTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "agents")
-    dbWriteTable(lfmc_db, "agents", agentsTable)
+    dbWriteTable(lfmc_db, "species", speciesTable, field.types = species_vars)
   }
 
-  lfmc_vars = c(SiteCode = int_type, AgentCode = int_type, SpeciesCode = int_type,
-                Date = date_type, SampleCode = txt_type,
-                FreshMass = dbl_type,
-                DryMass = dbl_type,
-                LFMC = dbl_type,
-                DryStem = dbl_type, DryLeaf = dbl_type,
-                LeafStemRatio = dbl_type,
-                PhenologyCode = int_type, PhenologySystem = int_type,
-                Notes = txt_type)
-  dbCreateTable(lfmc_db, "lfmc", lfmc_vars)
+  dbSendStatement(lfmc_db, "CREATE TABLE sites_species
+                    (
+                    SiteXSpecies INTEGER PRIMARY KEY,
+                    SitePlotCode INTEGER NOT NULL,
+                    SpeciesCode INTEGER NOT NULL,
+                    FOREIGN KEY(SitePlotCode)
+                    REFERENCES sites(SitePlotCode),
+                    FOREIGN KEY(SpeciesCode)
+                    REFERENCES species(SpeciesCode)
+                    )")
 
-  soilmoisture_vars = c(SiteCode = int_type,
-                        Date = date_type, Time = time_type,
-                        TopTemp = dbl_type, BottomTemp = dbl_type,
-                        TopMoisture = dbl_type, BottomMoisture = dbl_type)
-  dbCreateTable(lfmc_db, "soilmoisture", soilmoisture_vars)
+  dbSendStatement(lfmc_db, "CREATE TABLE lfmc
+                    (SampleCode INTEGER PRIMARY KEY,
+                    SiteXSpecies INTEGER,
+                    AgentCode INTEGER, Date DATE,
+                    FreshMass FLOAT, DryMass FLOAT,
+                    LFMC FLOAT, DryStem FLOAT, DryLeaf FLOAT,
+                    LeafStemRatio FLOAT, Notes TEXT,
+                    FOREIGN KEY(SiteXSpecies)
+                    REFERENCES sites_species(SiteXSpecies)
+                    )")
+
+  dbSendStatement(lfmc_db, "CREATE TABLE soil_temperature
+                    (SensorCode INTEGER PRIMARY KEY,
+                    SitePlotCode INTEGER,
+                    Date DATE, Time TIME,
+                    Temperature FLOAT,
+                    FOREIGN KEY(SitePlotCode)
+                    REFERENCES sites(SitePlotCode)
+                    )")
+
+  dbSendStatement(lfmc_db, "CREATE TABLE soil_moisture
+                    (SensorCode INTEGER PRIMARY KEY,
+                    SitePlotCode INTEGER,
+                    Date DATE, Time TIME,
+                    Moisture FLOAT,
+                    FOREIGN KEY(SitePlotCode)
+                    REFERENCES sites(SitePlotCode)
+                    )")
 
   DBI::dbDisconnect(lfmc_db)
 
   set_DBpath(file)
 }
+
+
+
+
+
 
