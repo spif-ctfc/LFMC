@@ -29,7 +29,7 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
 
   if(is.null(thesaurus_xlsx)) {
 
-    dbSendStatement(lfmc_db, "CREATE TABLE sites
+    DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites
                     (
                     SitePloteCode INTEGER PRIMARY KEY,
                     UTM_x FLOAT,
@@ -41,12 +41,13 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                     EndYear INTEGER
                     )")
 
-    dbSendStatement(lfmc_db, "CREATE TABLE species
+    DBI::dbSendStatement(lfmc_db, "CREATE TABLE species
                     (
                     SpeciesCode INTEGER PRIMARY KEY,
                     SpeciesName VARCHAR(50),
                     SpeciesCAT VARCHAR(50)
                     )")
+
   } else {
     site_vars = c(SitePlotCode = c("INTEGER", "PRIMARY KEY"),
                   UTM_x = "FLOAT",
@@ -58,19 +59,19 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                   EndYear = "INTEGER")
 
     sitesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "sites")
-    dbWriteTable(lfmc_db, "sites", sitesTable, field.types = site_vars)
+    DBI::dbWriteTable(lfmc_db, "sites", sitesTable, field.types = site_vars)
 
     species_vars = c(SpeciesCode = c("INTEGER", "PRIMARY KEY"),
                      SpeciesName = "VARCHAR(50)",
                      SpeciesCAT = "VARCHAR(50)")
 
     speciesTable = openxlsx::read.xlsx(thesaurus_xlsx, sheet = "species")
-    dbWriteTable(lfmc_db, "species", speciesTable, field.types = species_vars)
+    DBI::dbWriteTable(lfmc_db, "species", speciesTable, field.types = species_vars)
   }
 
-  dbSendStatement(lfmc_db, "CREATE TABLE sites_species
+
+  DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites_species
                     (
-                    SiteXSpecies INTEGER PRIMARY KEY,
                     SitePlotCode INTEGER NOT NULL,
                     SpeciesCode INTEGER NOT NULL,
                     FOREIGN KEY(SitePlotCode)
@@ -79,9 +80,9 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                     REFERENCES species(SpeciesCode)
                     )")
 
-  dbSendStatement(lfmc_db, "CREATE TABLE lfmc
+  DBI::dbSendStatement(lfmc_db, "CREATE TABLE lfmc
                     (SampleCode INTEGER PRIMARY KEY,
-                    SiteXSpecies INTEGER,
+                    SiteXSpecies VARCHAR(5),
                     AgentCode INTEGER, Date DATE,
                     FreshMass FLOAT, DryMass FLOAT,
                     LFMC FLOAT, DryStem FLOAT, DryLeaf FLOAT,
@@ -90,7 +91,7 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                     REFERENCES sites_species(SiteXSpecies)
                     )")
 
-  dbSendStatement(lfmc_db, "CREATE TABLE soil_temperature
+  DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_temperature
                     (SensorCode INTEGER PRIMARY KEY,
                     SitePlotCode INTEGER,
                     Date DATE, Time TIME,
@@ -99,7 +100,7 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                     REFERENCES sites(SitePlotCode)
                     )")
 
-  dbSendStatement(lfmc_db, "CREATE TABLE soil_moisture
+  DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_moisture
                     (SensorCode INTEGER PRIMARY KEY,
                     SitePlotCode INTEGER,
                     Date DATE, Time TIME,
@@ -108,13 +109,54 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                     REFERENCES sites(SitePlotCode)
                     )")
 
+  # Insert values in table sites_species
+
+  DBI::dbSendQuery(lfmc_db, "INSERT INTO sites_species
+                    VALUES
+                    (1, 1), (1, 3), (1, 4),
+                    (2, 1), (2, 2), (2, 4),
+                    (3, 1), (3, 2), (3, 4),
+                    (4, 1), (4, 2), (4, 4),
+                    (5, 1), (5, 2), (5, 3), (5, 4),
+                    (6, 3), (6, 5),
+                    (7, 1), (7, 2),
+                    (8, 1), (8, 2),
+                    (9, 1), (9, 2), (9, 3)")
+
+  # Add new column with code SiteXSpecies
+
+  DBI::dbSendStatement(lfmc_db, "ALTER TABLE sites_species
+                       ADD COLUMN SiteXSpecies")
+
+  DBI::dbSendStatement(lfmc_db, "UPDATE sites_species
+                       SET SiteXSpecies = cast(SitePlotCode || '_' || SpeciesCode
+                       AS VARCHAR(5))")
+
+  # Define the primary key constraint for table sites_species
+
+  DBI::dbSendStatement(lfmc_db, "ALTER TABLE sites_species
+                       RENAME TO ssp")
+
+  DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites_species
+                    (
+                    SitePlotCode INTEGER NOT NULL,
+                    SpeciesCode INTEGER NOT NULL,
+                    SiteXSpecies PRIMARY KEY,
+                    FOREIGN KEY(SitePlotCode)
+                    REFERENCES sites(SitePlotCode),
+                    FOREIGN KEY(SpeciesCode)
+                    REFERENCES species(SpeciesCode)
+                    )")
+
+  DBI::dbSendStatement(lfmc_db, "INSERT INTO sites_species
+                       SELECT * FROM ssp")
+
+  DBI::dbSendStatement(lfmc_db, "DROP TABLE ssp")
+
   DBI::dbDisconnect(lfmc_db)
 
   set_DBpath(file)
 }
-
-
-
 
 
 

@@ -2,27 +2,26 @@
 #'
 #' Parses LFMC records from a data frame
 #'
-#' @param lfmc The data frame from which LFMC records are to be read
-#' @param dateIni String to indicate the earliest date to import (using format in \code{dateFormat})
-#' @param dateFin String to indicate the latest date to import (using format in \code{dateFormat})
+#' @param lfmc The data frame from which LFMC records are to be read.
+#' @param dateIni String to indicate the earliest date to import (using format in \code{dateFormat}).
+#' @param dateFin String to indicate the latest date to import (using format in \code{dateFormat}).
 #' @param dateFormat String with date format (see \code{\link{as.Date}}).
 #' @param varmapping Named vector of variable mappings (see details).
 #' @param overwrite Whether or not to overwrite existing records. LFMC records are uniquely identified
 #' with field 'SampleCode'.
 #'
 #' @details Mapping should be provided for at least for 'Date', 'SiteCode', 'SampleCode' and either 'SpeciesCode' or 'SpeciesCAT'.
-#' If mapping for 'SpeciesCode' is supplied, then 'SpeciesCAT' is not used.
 #' Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values, but can
 #' be also mapped (data integrity is then user's responsibility). Variable for 'Date' can be of class \code{\link{Date}} or
 #' a string. In the latter case date strings are expected to be in \code{dateFormat}.
 #'
-#' Records with missing 'SampleCode' are discarded. Records already existing in the data base (i.e. records
+#' Records with missing 'SampleCode' are discarded. Records already existing in the database (i.e. records
 #' corresponding to existing 'SampleCode' values) are also discarded, unless \code{overwrite = TRUE}. This
 #' allows adding only new records even if the input data frame contains records already existing in the database.
 #'
 #' @examples
 #' \dontrun{
-#' # Init DB using excel file with thesaurus tables (agents, species, plots and sites)
+#' # Init DB using excel file with thesaurus tables (species and sites)
 #'
 #' init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx", overwrite = T)
 #'
@@ -34,39 +33,40 @@
 #'
 #'
 #' # Parse records from another file using another (identity) mapping
-#' varmapping2 = c("Date" = "Date", "SiteCode"  = "SiteCode",
-#'                 "SpeciesCode" = "SpeciesCode", "SampleCode" = "SampleCode",
-#'                 "FreshMass" = "FreshMass", "DryMass" = "DryMass",
-#'                 "DryStem" = "DryStem", "DryLeaf" = "DryLeaf")
-#' lfmc2 = openxlsx::read.xlsx("../LFMC_spif/LFMC_raw_table_Miquel.xlsx")
+#' varmapping2 = c("Date" = "DATA", "SiteCode"  = "CODI_PARCELA",
+#'                 "SpeciesCAT" = "ESPECIE", "SampleCode" = "NUM_MOSTRA",
+#'                 "FreshMass" = "PES_FRESC", "DryMass" = "PES_SEC",
+#'                 "DryStem" = "PES_TIGES", "DryLeaf" = "PES_FULLES",
+#'                 "Notes" = "Observacions")
+#' lfmc2 = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 #' lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
 #' parse_LFMC(lfmc2, varmapping = varmapping2)
 #' }
 #'
-parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%d",
-                     varmapping = c("Date" = "DATA",
-                                    "SiteCode"  = "CODI_PARCELA",
-                                    "SpeciesCAT" = "ESPECIE",
-                                    "SampleCode" = "NUM_MOSTRA",
-                                    "FreshMass" = "PES_FRESC",
-                                    "DryMass" = "PES_SEC",
-                                    "DryStem" = "PES_TIGES",
-                                    "DryLeaf" = "PES_FULLES",
-                                    "Notes" = "Observacions"),
+parse_LFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%d",
+                     varmapping = c("Date" = "Date",
+                                    "SiteCode"  = "SiteCode",
+                                    "SpeciesCode" = "SpeciesCode",
+                                    "SampleCode" = "SampleCode",
+                                    "FreshMass" = "FreshMass",
+                                    "DryMass" = "DryMass",
+                                    "LFMC" = "LFMC"),
                      overwrite = FALSE) {
 
-  if(!("Date" %in% names(varmapping))) stop("Please supply mapping for 'Date'")
+  # Required mapping variables
+
+  if (!("Date" %in% names(varmapping))) stop ("Please supply mapping for 'Date'")
 
   dates = lfmc[[varmapping[["Date"]]]]
-  if(class(dates)!="Date") {
+  if (class(dates)!="Date") {
     dates = as.Date(dates, format = dateFormat)
   }
   sel = rep(T, nrow(lfmc))
-  if(!is.null(dateIni)) {
+  if (!is.null(dateIni)) {
     dateIni = as.Date(dateIni, format = dateFormat)
     sel = sel & dates>=dateIni
   }
-  if(!is.null(dateFin)) {
+  if (!is.null(dateFin)) {
     dateFin = as.Date(dateFin, format = dateFormat)
     sel = sel & dates<=dateFin
   }
@@ -75,52 +75,65 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
 
   n = nrow(lfmc)
 
-  lfmc_df = data.frame(SiteCode = rep(NA,n), AgentCode = rep(NA, n), SpeciesCode = rep(NA, n),
-                Date = dates, SampleCode = rep(NA, n),
-                FreshMass = rep(NA, n),
-                DryMass = rep(NA, n),
-                LFMC = rep(NA, n),
-                DryStem = rep(NA, n), DryLeaf = rep(NA, n),
-                LeafStemRatio = rep(NA, n),
-                PhenologyCode = rep(NA, n), PhenologySystem = rep(NA, n))
+  lfmc_df = data.frame(SampleCode = rep(NA, n),
+                       SiteXSpecies = rep(NA,n),
+                       AgentCode = rep(NA, n),
+                       Date = dates,
+                       FreshMass = rep(NA, n),
+                       DryMass = rep(NA, n),
+                       LFMC = rep(NA, n),
+                       DryStem = rep(NA, n),
+                       DryLeaf = rep(NA, n),
+                       LeafStemRatio = rep(NA, n))
 
+  if (!("SiteCode" %in% names(varmapping))) stop ("Please supply mapping for 'SiteCode'")
+  if (!("SampleCode" %in% names(varmapping))) stop ("Please supply mapping for 'SampleCode'")
 
+  # Generate SiteXSpecies Code
 
-  if(!("SiteCode" %in% names(varmapping))) stop("Please supply mapping for 'SiteCode'")
-  if(!("SampleCode" %in% names(varmapping))) stop("Please supply mapping for 'SampleCode'")
+  sitespCode = rep(NA, n)
+
+  if ("SiteCode" %in% names(varmapping) & "SpeciesCode" %in% names(varmapping)) {
+    if (varmapping[["SiteCode"]] %in% names(lfmc) & varmapping[["SpeciesCode"]] %in% names(lfmc)) {
+      # New column in lfmc dataframe with SiteXSpecies Code
+      lfmc$SXSp <- paste0(lfmc[[varmapping[['SiteCode']]]], '_', lfmc[[varmapping[['SpeciesCode']]]])
+      # Add SiteXSpecies records to the table lfmc_df
+      sitespCode = lfmc$SXSp
+    } else if (!varmapping[["SiteCode"]] %in% names(lfmc)) {
+      stop (paste0("SiteCode variable '", varmapping[["SiteCode"]], "' not found in input data frame. Check mapping."))
+    } else stop (paste0("SpeciesCode variable '", varmapping[["SpeciesCode"]], "' not found in input data frame. Check mapping."))
+  }
+
+  if ("SiteCode" %in% names(varmapping) & "SpeciesCAT" %in% names(varmapping)) {
+    if (varmapping[["SiteCode"]] %in% names(lfmc) & varmapping[["SpeciesCAT"]] %in% names(lfmc)) {
+      spCAT = lfmc[[varmapping[["SpeciesCAT"]]]]
+      spTh = extract_DBtable("species")
+
+      spCode = rep(NA, n)
+      for(i in 1:length(spCAT)) spCode[i] = spTh$SpeciesCode[spTh$SpeciesCAT==spCAT[i]]
+
+      lfmc$SXSp <- paste0(lfmc[[varmapping[['SiteCode']]]], '_', spCode)
+      sitespCode = lfmc$SXSp
+
+    } else if (!varmapping[["SiteCode"]] %in% names(lfmc)) {
+      stop (paste0("SiteCode variable '", varmapping[["SiteCode"]], "' not found in input data frame. Check mapping."))
+    } else stop (paste0("SpeciesCAT variable '", varmapping[["SpeciesCAT"]], "' not found in input data frame. Check mapping."))
+  }
+
+  lfmc_df[["SiteXSpecies"]] = sitespCode
+
 
   ## Mapping the rest of variables
-
-  if(varmapping[["SiteCode"]] %in% names(lfmc)) lfmc_df[["SiteCode"]] = lfmc[[varmapping[["SiteCode"]]]]
-  else stop(paste0("SiteCode variable '", varmapping[["SiteCode"]], "' not found in input data frame. Check mapping."))
 
   if(varmapping[["SampleCode"]] %in% names(lfmc)) lfmc_df[["SampleCode"]] = lfmc[[varmapping[["SampleCode"]]]]
   else stop(paste0("SampleCode variable '", varmapping[["SampleCode"]], "' not found in input data frame. Check mapping."))
 
   if("AgentCode" %in% names(varmapping)) {
     if(varmapping[["AgentCode"]] %in% names(lfmc)) lfmc_df[["AgentCode"]] = lfmc[[varmapping[["AgentCode"]]]]
-    else stop(paste0("AgentCode variable '", varmapping[["AgentCode"]], "' not found in input data frame. Check mapping."))
-
-  }
-  spCode = rep(NA, n)
-  if("SpeciesCode" %in% names(varmapping)) {
-    if(varmapping[["SpeciesCode"]] %in% names(lfmc)) {
-      spCode = lfmc[[varmapping[["SpeciesCode"]]]]
-    } else {
-      stop(paste0("SpeciesCode variable '", varmapping[["SpeciesCode"]], "' not found in input data frame. Check mapping."))
+    else {
+      stop(paste0("AgentCode variable '", varmapping[["AgentCode"]], "' not found in input data frame. Check mapping."))
     }
-  } else if("SpeciesCAT" %in% names(varmapping)) {
-    if(varmapping[["SpeciesCAT"]] %in% names(lfmc)) {
-      spCAT = lfmc[[varmapping[["SpeciesCAT"]]]]
-      spTh = extract_DBtable("species")
-      for(i in 1:length(spCAT)) spCode[i] = spTh$SpeciesCode[spTh$SpeciesCAT==spCAT[i]]
-    } else {
-      stop(paste0("SpeciesCAT variable '", varmapping[["SpeciesCAT"]], "' not found in input data frame. Check mapping."))
-    }
-  } else {
-    stop("Please supply mapping for 'SpeciesCode' or 'SpeciesCAT'")
   }
-  lfmc_df[["SpeciesCode"]] =spCode
 
   if("FreshMass" %in% names(varmapping)) {
     if(varmapping[["FreshMass"]] %in% names(lfmc)) lfmc_df[["FreshMass"]] = as.numeric(lfmc[[varmapping[["FreshMass"]]]])
@@ -169,13 +182,15 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
     lfmc_df = lfmc_df[!missing_code,]
   }
 
-
+  # Connect to database
+  if (!exists("lfmcdbfile", envir = globalenv())) stop ("Use set_DBtable() to load database")
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
-  lfmc_table = dbReadTable(lfmc_db, "lfmc")
+  lfmc_table = DBI::dbReadTable(lfmc_db, "lfmc")
   existing = lfmc_df$SampleCode %in% lfmc_table$SampleCode
   lfmc_new = lfmc_df[!existing,]
   lfmc_existing = lfmc_df[existing,]
   if(!overwrite) {
+
     ## Remove already existing samples
     if(sum(existing)>0) {
       cat(paste0(sum(existing), " records discarded because of existing 'SampleCode' values.\n"))
@@ -194,6 +209,7 @@ parse_LFMC<-function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-%m-%
     dbRemoveTable(lfmc_db, "lfmc")
     dbWriteTable(lfmc_db, "lfmc", lfmc_table)
   }
+
   nnew = dbAppendTable(lfmc_db, "lfmc", lfmc_new)
   cat(paste0(nnew, " new LFMC records added to database.\n"))
 
