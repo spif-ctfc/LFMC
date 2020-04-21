@@ -9,8 +9,7 @@ init_DB(file, thesaurus_xlsx = NULL, overwrite = FALSE)
 \arguments{
 \item{file}{Database filename}
 
-\item{thesaurus_xlsx}{Excel 'xlsx' file with thesaurus tables for 'plots',
-'sites', 'species' and 'agents'.}
+\item{thesaurus_xlsx}{Excel 'xlsx' file with thesaurus tables for 'sites' and 'species'}
 
 \item{overwrite}{Boolean flag to force overwritting an existing file}
 }
