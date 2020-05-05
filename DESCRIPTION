@@ -12,7 +12,10 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Imports: openxlsx,
-         lubridate
+         lubridate,
+         dplyr,
+         ggplotFL,
+         viridis
 Depends: R (>= 3.4.0), DBI, RSQLite
 VignetteBuilder: utils, knitr
 RoxygenNote: 7.0.2
