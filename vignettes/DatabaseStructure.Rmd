@@ -61,6 +61,8 @@ Fields:
 |                  | DryStem        | float     |                                                | NA          | 
 |                  | DryLeaf        | float     |                                                | NA          | 
 |                  | LeafStemRatio  | float     |                                                | NA          | 
+|                  | LFMCflag       | integer   | a flag indicating LFMC outliers manually identified | NA     |
+|                  | AOflag         | integer   | a flag indicating LFMC additive outliers       | NA          |
 |                  | PhenologyCode  | integer   |                                                | Foreign Key |
 |                  | Notes          | text      |                                                | NA          | 
 | PHENOLOGY        | PhenologyCode  | integer   | not null, unique                               | Primary Key |

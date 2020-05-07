@@ -87,6 +87,8 @@ init_DB <- function(file, thesaurus_xlsx = NULL, overwrite = FALSE) {
                     FreshMass FLOAT, DryMass FLOAT,
                     LFMC FLOAT, DryStem FLOAT, DryLeaf FLOAT,
                     LeafStemRatio FLOAT,
+                    LFMCflag INTEGER,
+                    AOflag INTEGER,
                     PhenologyCode INTEGER,Notes TEXT,
                     FOREIGN KEY(SiteXSpecies)
                     REFERENCES sites_species(SiteXSpecies)
