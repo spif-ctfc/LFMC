@@ -32,11 +32,10 @@ Fields:
 
 | Entity           | Variable         |	Data type |  Description                                   | Key         |
 |------------------|------------------|-----------|------------------------------------------------|-------------|
-| SITES            | LocalitySiteCode | varchar   | not null, unique, ZoneCode and SiteCode        | Primary Key |
-|                  | LocalityCode     | integer   |                                                | NA          |
-|                  | SamplingSiteCode | integer   |                                                | NA          | 
-|                  | LocalityName     | varchar   |                                                | NA          |
+| SITES            | SamplingSiteCode | integer   | not null, unique                               | Primary Key |
 |                  | SamplingSiteName | varchar   |                                                | NA          |
+|                  | LocalityCode     | integer   |                                                | NA          |
+|                  | LocalityName     | varchar   |                                                | NA          |
 |                  | UTM_x            | float     |                                                | NA          |
 |                  | UTM_y            | float     |                                                | NA          |
 |                  | StartYear        | integer   | year the plot was started                      | NA          | 
@@ -45,8 +44,8 @@ Fields:
 | SPECIES          | SpeciesCode      | integer   | not null, unique,                              | Primary Key |
 |                  | SpeciesName      | varchar   | scientific name                                | NA          |
 |                  | SpeciesCAT       | varchar   | catalan common name                            | NA          | 
-| SITES_SPECIES    | SiteSpCode       | varchar   | not null, unique, SitePlotCode and SpeciesCode | Primary Key |
-|                  | LocalitySiteCode | varchar   | not null                                       | Foreign Key |
+| SITES_SPECIES    | SiteSpCode       | varchar   | not null, unique                               | Primary Key |
+|                  | SamplingSiteCode | integer   | not null                                       | Foreign Key |
 |                  | SpeciesCode      | integer   | not null                                       | Foreign Key |
 | LFMC             | SampleCode       | integer   | not null, unique                               | Primary Key |
 |                  | SiteSpCode       | varchar   | not null                                       | Foreign Key |
