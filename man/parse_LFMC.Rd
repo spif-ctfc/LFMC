@@ -4,18 +4,23 @@
 \alias{parse_LFMC}
 \title{Parse LFMC data}
 \usage{
-parse_LFMC(lfmc, dateIni = NULL, dateFin = NULL,
-  dateFormat = "\%Y-\%m-\%d", varmapping = c(Date = "DATA", SiteCode =
-  "CODI_PARCELA", SpeciesCAT = "ESPECIE", SampleCode = "NUM_MOSTRA",
-  FreshMass = "PES_FRESC", DryMass = "PES_SEC", DryStem = "PES_TIGES",
-  DryLeaf = "PES_FULLES", Notes = "Observacions"), overwrite = FALSE)
+parse_LFMC(
+  lfmc,
+  dateIni = NULL,
+  dateFin = NULL,
+  dateFormat = "\%Y-\%m-\%d",
+  varmapping = c(Date = "Date", SiteCode = "SiteCode", SpeciesCode = "SpeciesCode",
+    SampleCode = "SampleCode", FreshMass = "FreshMass", DryMass = "DryMass", LFMC =
+    "LFMC"),
+  overwrite = FALSE
+)
 }
 \arguments{
-\item{lfmc}{The data frame from which LFMC records are to be read}
+\item{lfmc}{The data frame from which LFMC records are to be read.}
 
-\item{dateIni}{String to indicate the earliest date to import (using format in \code{dateFormat})}
+\item{dateIni}{String to indicate the earliest date to import (using format in \code{dateFormat}).}
 
-\item{dateFin}{String to indicate the latest date to import (using format in \code{dateFormat})}
+\item{dateFin}{String to indicate the latest date to import (using format in \code{dateFormat}).}
 
 \item{dateFormat}{String with date format (see \code{\link{as.Date}}).}
 
@@ -29,18 +34,17 @@ Parses LFMC records from a data frame
 }
 \details{
 Mapping should be provided for at least for 'Date', 'SiteCode', 'SampleCode' and either 'SpeciesCode' or 'SpeciesCAT'.
-If mapping for 'SpeciesCode' is supplied, then 'SpeciesCAT' is not used.
 Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values, but can
 be also mapped (data integrity is then user's responsibility). Variable for 'Date' can be of class \code{\link{Date}} or
 a string. In the latter case date strings are expected to be in \code{dateFormat}.
 
-Records with missing 'SampleCode' are discarded. Records already existing in the data base (i.e. records
+Records with missing 'SampleCode' are discarded. Records already existing in the database (i.e. records
 corresponding to existing 'SampleCode' values) are also discarded, unless \code{overwrite = TRUE}. This
 allows adding only new records even if the input data frame contains records already existing in the database.
 }
 \examples{
 \dontrun{
-# Init DB using excel file with thesaurus tables (agents, species, plots and sites)
+# Init DB using excel file with thesaurus tables (species and sites)
 
 init_DB("../lfmc", thesaurus_xlsx = "../LFMC_tesaures.xlsx", overwrite = T)
 
@@ -52,11 +56,12 @@ parse_LFMC(lfmc)
 
 
 # Parse records from another file using another (identity) mapping
-varmapping2 = c("Date" = "Date", "SiteCode"  = "SiteCode",
-                "SpeciesCode" = "SpeciesCode", "SampleCode" = "SampleCode",
-                "FreshMass" = "FreshMass", "DryMass" = "DryMass",
-                "DryStem" = "DryStem", "DryLeaf" = "DryLeaf")
-lfmc2 = openxlsx::read.xlsx("../LFMC_spif/LFMC_raw_table_Miquel.xlsx")
+varmapping2 = c("Date" = "DATA", "SiteCode"  = "CODI_PARCELA",
+                "SpeciesCAT" = "ESPECIE", "SampleCode" = "NUM_MOSTRA",
+                "FreshMass" = "PES_FRESC", "DryMass" = "PES_SEC",
+                "DryStem" = "PES_TIGES", "DryLeaf" = "PES_FULLES",
+                "Notes" = "Observacions")
+lfmc2 = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
 parse_LFMC(lfmc2, varmapping = varmapping2)
 }
