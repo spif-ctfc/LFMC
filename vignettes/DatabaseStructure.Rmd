@@ -12,9 +12,6 @@ vignette: >
 
 ## Database design and structure 
 
-
-![](SPIF_ERD.png){width=130%}
-
 ![](SPIF_LogicalSchema.png){width=130%}
 
 
@@ -33,53 +30,53 @@ Fields:
   - Foreign key: column referencing the primary key from another entity (referenced entity)
 
 
-| Entity           | Variable       |	Data type |  Description                                   | Key         |
-|------------------|----------------|-----------|------------------------------------------------|-------------|
-| SITES            | SitePlotcode   | varchar   | not null, unique, ZoneCode and SiteCode        | Primary Key |
-|                  | UTM_x          | float     |                                                | NA          |
-|                  | UTM_y          | float     |                                                | NA          |
-|                  | ZoneCode       | integer   |                                                | NA          |
-|                  | SiteCode       | integer   |                                                | NA          | 
-|                  | ZoneName       | varchar   |                                                | NA          |
-|                  | SiteName       | varchar   |                                                | NA          |
-|                  | StartYear      | integer   | year the plot was started                      | NA          | 
-|                  | EndYear        | integer   | year the plot was finalized                    | NA          | 
-|                  | SensorCode     | varchar   | unique code for TDR sensor                     | Foreign Key | 
-| SPECIES          | SpeciesCode    | integer   | not null, unique,                              | Primary Key |
-|                  | SpeciesName    | varchar   | scientific name                                | NA          |
-|                  | SpeciesCAT     | varchar   | catalan common name                            | NA          | 
-| SITES_SPECIES    | SiteXSpecies   | varchar   | not null, unique, SitePlotCode and SpeciesCode | Primary Key |
-|                  | SitePlotCode   | varchar   | not null                                       | Foreign Key |
-|                  | SpeciesCode    | integer   | not null                                       | Foreign Key |
-| LFMC             | SampleCode     | integer   | not null, unique                               | Primary Key |
-|                  | SiteXSpecies   | varchar   | not null                                       | Foreign Key |
-|                  | AgentCode      | integer   | LFMC data collector id                         | NA          | 
-|                  | Date           | date      |                                                | NA          |
-|                  | FreshMass      | float     |                                                | NA          | 
-|                  | DryMass        | float     |                                                | NA          | 
-|                  | LFMC           | float     |                                                | NA          | 
-|                  | DryStem        | float     |                                                | NA          | 
-|                  | DryLeaf        | float     |                                                | NA          | 
-|                  | LeafStemRatio  | float     |                                                | NA          | 
-|                  | LFMCflag       | integer   | a flag indicating LFMC outliers manually identified | NA     |
-|                  | AOflag         | integer   | a flag indicating LFMC additive outliers       | NA          |
-|                  | PhenologyCode  | integer   |                                                | Foreign Key |
-|                  | Notes          | text      |                                                | NA          | 
-| PHENOLOGY        | PhenologyCode  | integer   | not null, unique                               | Primary Key |
-|                  | PhenologySystem| integer   | old method = 1, current method = 2, for more details see the section 'Phenology coding' below | NA |
-|                  | Phenology      | integer   |                                                | NA          | 
-| SOIL_TEMPERATURE | SensorCode     | integer   | not null, unique                               | Primary Key |
-|                  | SitePlotCode   | integer   | not null                                       | Foreign Key |
-|                  | Date           | date      |                                                | NA          |
-|                  | Time           | time      |                                                | NA          |
-|                  | Temperature    | float     | soil temperature measured at different depths  | NA          |
-| TDR_SENSOR       | SensorCode     | varchar   | not null, unique                               | Primary Key |
-|                  | SoilLevel      | integer   |                                                | NA          |
-| SOIL_MOISTURE    | SMCode         | integer   | not null, unique                               | Primary Key |
-|                  | SensorCode     | integer   | not null, unique                               | Foreign Key |
-|                  | Date           | date      |                                                | NA          |
-|                  | Time           | time      |                                                | NA          |
-|                  | Moisture       | float     | soil moisture measured at different depths     | NA          |
+| Entity           | Variable         |	Data type |  Description                                   | Key         |
+|------------------|------------------|-----------|------------------------------------------------|-------------|
+| SITES            | LocalitySiteCode | varchar   | not null, unique, ZoneCode and SiteCode        | Primary Key |
+|                  | LocalityCode     | integer   |                                                | NA          |
+|                  | SamplingSiteCode | integer   |                                                | NA          | 
+|                  | LocalityName     | varchar   |                                                | NA          |
+|                  | SamplingSiteName | varchar   |                                                | NA          |
+|                  | UTM_x            | float     |                                                | NA          |
+|                  | UTM_y            | float     |                                                | NA          |
+|                  | StartYear        | integer   | year the plot was started                      | NA          | 
+|                  | EndYear          | integer   | year the plot was finalized                    | NA          | 
+|                  | SensorCode       | varchar   | unique code for TDR sensor                     | Foreign Key | 
+| SPECIES          | SpeciesCode      | integer   | not null, unique,                              | Primary Key |
+|                  | SpeciesName      | varchar   | scientific name                                | NA          |
+|                  | SpeciesCAT       | varchar   | catalan common name                            | NA          | 
+| SITES_SPECIES    | SiteSpCode       | varchar   | not null, unique, SitePlotCode and SpeciesCode | Primary Key |
+|                  | LocalitySiteCode | varchar   | not null                                       | Foreign Key |
+|                  | SpeciesCode      | integer   | not null                                       | Foreign Key |
+| LFMC             | SampleCode       | integer   | not null, unique                               | Primary Key |
+|                  | SiteSpCode       | varchar   | not null                                       | Foreign Key |
+|                  | Date             | date      |                                                | NA          |
+|                  | FreshMass        | float     |                                                | NA          | 
+|                  | DryMass          | float     |                                                | NA          | 
+|                  | LFMC             | float     | derived attribute computed from FreshMass and DryMass| NA    | 
+|                  | DryStem          | float     |                                                | NA          | 
+|                  | DryLeaf          | float     |                                                | NA          | 
+|                  | LeafStemRatio    | float     | derived attribute computed from DryLeaf and DryStem | NA     | 
+|                  | LFMCOutlier      | boolean   | a flag indicating LFMC outliers manually identified | NA     |
+|                  | AdditiveOutlier  | boolean   | a flag indicating LFMC additive outliers       | NA          |
+|                  | ImputatedValue   | boolean   | a flag indicating LFMC imputed values          | NA          |
+|                  | PhenologyCode    | integer   |                                                | Foreign Key |
+|                  | Notes            | text      |                                                | NA          | 
+| PHENOLOGY        | PhenologyCode    | integer   | not null, unique                               | Primary Key |
+|                  | PhenologySystem  | integer   | old method = 1, current method = 2, for more details see the section 'Phenology coding' below | NA |
+|                  | Phenology        | integer   |                                                | NA          | 
+| SOIL_TEMPERATURE | SensorCode       | integer   | not null, unique                               | Primary Key |
+|                  | LocalitySiteCode | integer   | not null                                       | Foreign Key |
+|                  | Date             | date      |                                                | NA          |
+|                  | Time             | time      |                                                | NA          |
+|                  | Temperature      | float     | soil temperature measured at different depths  | NA          |
+| TDR_SENSOR       | SensorCode       | varchar   | not null, unique                               | Primary Key |
+|                  | SoilLevel        | integer   |                                                | NA          |
+| SOIL_MOISTURE    | SMCode           | integer   | not null, unique                               | Primary Key |
+|                  | SensorCode       | integer   | not null, unique                               | Foreign Key |
+|                  | Date             | date      |                                                | NA          |
+|                  | Time             | time      |                                                | NA          |
+|                  | Moisture         | float     | soil moisture measured at different depths     | NA          |
 
 
 ## Phenology coding
