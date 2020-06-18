@@ -31,14 +31,14 @@ initDB <- function(file, overwrite = FALSE) {
   sites <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites
                     (
                     SamplingSiteCode INTEGER PRIMARY KEY,
-                    SamplingSiteName VARCHAR,
+                    SamplingSiteName TEXT,
                     LocalityCode INTEGER,
-                    LocalityName VARCHAR,
-                    Longitude FLOAT,
-                    Latitude FLOAT,
+                    LocalityName TEXT,
+                    Longitude REAL,
+                    Latitude REAL,
                     StartYear INTEGER,
                     EndYear INTEGER,
-                    SensorCode VARCHAR,
+                    SensorCode TEXT,
                     FOREIGN KEY(SensorCode)
                     REFERENCES tdr_sensor(SensorCode)
                     )")
@@ -47,14 +47,14 @@ initDB <- function(file, overwrite = FALSE) {
   species <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE species
                     (
                     SpeciesCode INTEGER PRIMARY KEY,
-                    SpeciesName VARCHAR,
-                    SpeciesCAT VARCHAR
+                    SpeciesName TEXT,
+                    SpeciesCAT TEXT
                     )")
   DBI::dbClearResult(species)
 
   sites_species <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites_species
                     (
-                    SiteSpCode VARCHAR PRIMARY KEY,
+                    SiteSpCode TEXT PRIMARY KEY,
                     SamplingSiteCode INTEGER NOT NULL,
                     SpeciesCode INTEGER NOT NULL,
                     FOREIGN KEY(SamplingSiteCode)
@@ -72,15 +72,15 @@ initDB <- function(file, overwrite = FALSE) {
 
 
   lfmc <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE lfmc
-                    (SampleCode VARCHAR PRIMARY KEY,
-                    SiteSpCode VARCHAR,
-                    Date DATE,
-                    FreshMass FLOAT, DryMass FLOAT,
-                    LFMC FLOAT,
-                    DryStem FLOAT, DryLeaf FLOAT,
-                    LeafStemRatio FLOAT,
-                    ManualOutlier LOGICAL,
-                    AdditiveOutlier LOGICAL,
+                    (SampleCode TEXT PRIMARY KEY,
+                    SiteSpCode TEXT,
+                    Date NUMERIC,
+                    FreshMass REAL, DryMass REAL,
+                    LFMC REAL,
+                    DryStem REAL, DryLeaf REAL,
+                    LeafStemRatio REAL,
+                    ManualOutlier NUMERIC,
+                    AdditiveOutlier NUMERIC,
                     PhenologyCode INTEGER, Notes TEXT,
                     FOREIGN KEY(PhenologyCode)
                     REFERENCES phenology(PhenologyCode)
@@ -97,26 +97,26 @@ initDB <- function(file, overwrite = FALSE) {
   DBI::dbClearResult(phenology)
 
   soil_temp <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_temperature
-                    (SensorCode VARCHAR PRIMARY KEY,
+                    (SensorCode TEXT PRIMARY KEY,
                     SamplingSiteCode INTEGER,
-                    Date DATE, Time TIME,
-                    Temperature FLOAT,
+                    Date NUMERIC, Time NUMERIC,
+                    Temperature REAL,
                     FOREIGN KEY(SamplingSiteCode)
                     REFERENCES sites(SamplingSiteCode)
                     )")
   DBI::dbClearResult(soil_temp)
 
   tdr <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE tdr_sensor
-                    (SensorCode VARCHAR PRIMARY KEY,
+                    (SensorCode TEXT PRIMARY KEY,
                     SoilLevel INTEGER
                     )")
   DBI::dbClearResult(tdr)
 
   soil_moist <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_moisture
-                    (SMCode VARCHAR PRIMARY KEY,
-                    SensorCode VARCHAR,
-                    Date DATE, Time TIME,
-                    Moisture FLOAT,
+                    (SMCode TEXT PRIMARY KEY,
+                    SensorCode TEXT,
+                    Date NUMERIC, Time NUMERIC,
+                    Moisture REAL,
                     FOREIGN KEY(SensorCode)
                     REFERENCES sites(tdr_sensor)
                     )")
