@@ -22,7 +22,7 @@ Fields:
 
 * Entity name
 * Variable: variable names by entity
-* Data type: sql data type per variable  
+* Data type: SQLite data type per variable  
 * Description: a brief description and data restrictions 
 * Key 
   - Primary key: unique row id
@@ -32,48 +32,48 @@ Fields:
 | Entity           | Variable         |	Data type |  Description                                   | Key         |
 |------------------|------------------|-----------|------------------------------------------------|-------------|
 | SITES            | SamplingSiteCode | integer   | not null, unique                               | Primary Key |
-|                  | SamplingSiteName | varchar   |                                                | NA          |
+|                  | SamplingSiteName | text      |                                                | NA          |
 |                  | LocalityCode     | integer   |                                                | NA          |
-|                  | LocalityName     | varchar   |                                                | NA          |
-|                  | Latitude         | float     |                                                | NA          |
-|                  | Longitude        | float     |                                                | NA          |
+|                  | LocalityName     | text      |                                                | NA          |
+|                  | Latitude         | real      |                                                | NA          |
+|                  | Longitude        | real      |                                                | NA          |
 |                  | StartYear        | integer   | year the plot was started                      | NA          | 
 |                  | EndYear          | integer   | year the plot was finalized                    | NA          | 
-|                  | SensorCode       | varchar   | unique code for TDR sensor                     | Foreign Key | 
+|                  | SensorCode       | text      | unique code for TDR sensor                     | Foreign Key | 
 | SPECIES          | SpeciesCode      | integer   | not null, unique,                              | Primary Key |
-|                  | SpeciesName      | varchar   | scientific name                                | NA          |
-|                  | SpeciesCAT       | varchar   | catalan common name                            | NA          | 
-| SITES_SPECIES    | SiteSpCode       | varchar   | not null, unique                               | Primary Key |
+|                  | SpeciesName      | text      | scientific name                                | NA          |
+|                  | SpeciesCAT       | text      | catalan common name                            | NA          | 
+| SITES_SPECIES    | SiteSpCode       | text      | not null, unique                               | Primary Key |
 |                  | SamplingSiteCode | integer   | not null                                       | Foreign Key |
 |                  | SpeciesCode      | integer   | not null                                       | Foreign Key |
-| LFMC             | SampleCode       | varchar   | not null, unique                               | Primary Key |
-|                  | SiteSpCode       | varchar   | not null                                       | Foreign Key |
-|                  | Date             | date      |                                                | NA          |
-|                  | FreshMass        | float     |                                                | NA          | 
-|                  | DryMass          | float     |                                                | NA          | 
-|                  | LFMC             | float     | derived attribute computed from FreshMass and DryMass| NA    | 
-|                  | DryStem          | float     |                                                | NA          | 
-|                  | DryLeaf          | float     |                                                | NA          | 
-|                  | LeafStemRatio    | float     | derived attribute computed from DryLeaf and DryStem | NA     | 
-|                  | LFMCOutlier      | boolean   | a flag indicating LFMC outliers manually identified | NA     |
-|                  | AdditiveOutlier  | boolean   | a flag indicating LFMC additive outliers       | NA          |
+| LFMC             | SampleCode       | text      | not null, unique                               | Primary Key |
+|                  | SiteSpCode       | text      | not null                                       | Foreign Key |
+|                  | Date             | numeric   |                                                | NA          |
+|                  | FreshMass        | real      |                                                | NA          | 
+|                  | DryMass          | real      |                                                | NA          | 
+|                  | LFMC             | real      | derived attribute computed from FreshMass and DryMass| NA    | 
+|                  | DryStem          | real      |                                                | NA          | 
+|                  | DryLeaf          | real      |                                                | NA          | 
+|                  | LeafStemRatio    | real      | derived attribute computed from DryLeaf and DryStem | NA     | 
+|                  | LFMCOutlier      | numeric   | a flag indicating LFMC outliers manually identified | NA     |
+|                  | AdditiveOutlier  | numeric   | a flag indicating LFMC additive outliers       | NA          |
 |                  | PhenologyCode    | integer   |                                                | Foreign Key |
 |                  | Notes            | text      |                                                | NA          | 
 | PHENOLOGY        | PhenologyCode    | integer   | not null, unique                               | Primary Key |
 |                  | PhenologySystem  | integer   | old method = 1, current method = 2, for more details see the section 'Phenology coding' below | NA |
 |                  | Phenology        | integer   |                                                | NA          | 
-| SOIL_TEMPERATURE | SensorCode       | varchar   | not null, unique                               | Primary Key |
+| SOIL_TEMPERATURE | SensorCode       | text      | not null, unique                               | Primary Key |
 |                  | SamplingSiteCode | integer   | not null                                       | Foreign Key |
-|                  | Date             | date      |                                                | NA          |
-|                  | Time             | time      |                                                | NA          |
-|                  | Temperature      | float     | soil temperature measured at different depths  | NA          |
-| TDR_SENSOR       | SensorCode       | varchar   | not null, unique                               | Primary Key |
+|                  | Date             | numeric   |                                                | NA          |
+|                  | Time             | numeric   |                                                | NA          |
+|                  | Temperature      | real      | soil temperature measured at different depths  | NA          |
+| TDR_SENSOR       | SensorCode       | text      | not null, unique                               | Primary Key |
 |                  | SoilLevel        | integer   |                                                | NA          |
-| SOIL_MOISTURE    | SMCode           | varchar   | not null, unique                               | Primary Key |
-|                  | SensorCode       | varchar   | not null, unique                               | Foreign Key |
-|                  | Date             | date      |                                                | NA          |
-|                  | Time             | time      |                                                | NA          |
-|                  | Moisture         | float     | soil moisture measured at different depths     | NA          |
+| SOIL_MOISTURE    | SMCode           | text      | not null, unique                               | Primary Key |
+|                  | SensorCode       | text      | not null, unique                               | Foreign Key |
+|                  | Date             | numeric   |                                                | NA          |
+|                  | Time             | numeric   |                                                | NA          |
+|                  | Moisture         | real      | soil moisture measured at different depths     | NA          |
 
 
 ## Phenology coding
