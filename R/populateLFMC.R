@@ -171,10 +171,9 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   nnew = dbAppendTable(lfmc_db, "lfmc", lfmc_new)
   cat(paste0(nnew, " new LFMC records added to database.\n"))
 
-
-  # if(outliersSearch) {
-  #   outlierSearch(lfmc_db)
-  # }
+  if(outliersSearch) {
+    outlierSearch(lfmc_db)
+  }
 
   dbDisconnect(lfmc_db)
 }
