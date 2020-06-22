@@ -5,17 +5,25 @@ Version: 0.1.0
 Authors@R: c(
 	person('Miquel', 'De Cáceres', role=c('aut','cre'),
 	email='miquelcaceres@gmail.com'),
+	person('Ruth', 'Delgado-Dávila', role='aut'),
 	person('Eva', 'Gabriel', role='aut'),
 	person('Pere', 'Casals', role='aut'))
 Description: An R package to manage and analyze the live fuel moisture content (LFMC) database of the Catalan "Servei de Prevencio d'Incendis" (SPIF)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: openxlsx,
-         lubridate,
-         dplyr,
-         ggplotFL,
-         viridis
+Suggests:
+    knitr,
+    ggplotFL,
+    viridis
+Imports: 
+    openxlsx,
+    lubridate,
+    tidyverse,
+    stats,
+    imputeTS,
+    tsoutliers
 Depends: R (>= 3.4.0), DBI, RSQLite
-VignetteBuilder: utils, knitr
+VignetteBuilder: knitr, utils
 RoxygenNote: 7.0.2
+
