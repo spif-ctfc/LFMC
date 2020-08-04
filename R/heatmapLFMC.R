@@ -7,7 +7,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'    heatmapLFMC(variable = "LFMC", speciescode = 5, sitecode = c(5, 50), period = "Month")
+#'    heatmapLFMC(variable = "LFMC", speciescode = 5, sitecode = 50, period = "Month")
 #' }
 #'
 #' @return A heatmap by site
