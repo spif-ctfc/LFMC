@@ -19,7 +19,9 @@ Suggests:
 Imports: 
     openxlsx,
     lubridate,
-    tidyverse,
+    dplyr,
+    tidyr,
+    ggplot2,
     stats,
     imputeTS,
     tsoutliers
