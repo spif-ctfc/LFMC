@@ -30,13 +30,13 @@ populateLFMC(
 \item{overwrite}{Whether or not to overwrite existing records. LFMC records are uniquely identified
 with field 'SampleCode'.}
 
-\item{outlierSearch}{Logical to indicate if outliers search routine is run and import the resulting values}
+\item{outlierSearch}{Logical to indicate if outliers search routine is run}
 }
 \description{
 Fills LFMC records from a data frame
 }
 \details{
-Mapping should be provided for at least for 'Date', 'SamplingSiteCode', 'SampleCode' and 'SpeciesCode'.
+Mapping should be provided at least for 'Date', 'SamplingSiteCode', 'SampleCode' and 'SpeciesCode'.
 Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values. Variable for 'Date' can be of class \code{\link{Date}} or
 a string. In the latter case date strings are expected to be in \code{dateFormat}.
 
@@ -48,11 +48,11 @@ allows adding only new records even if the input data frame contains records alr
 \dontrun{
 # Init DB
 
-init_DB("../lfmc", overwrite = T)
+initDB("../lfmc", overwrite = T)
 
 # Parse records from file "2019.xlsx"
 
-lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx", sheet = "sites")
+lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
 populateLFMC(lfmc)
 
