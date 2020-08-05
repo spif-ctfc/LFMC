@@ -6,8 +6,12 @@
 #'
 #' @examples
 #' \dontrun{
-#'    set_DBpath("../lfmc.sqlite")
+#'    setDBpath("../lfmc.sqlite")
 #' }
+#'
+#' @export
+#'
+
 setDBpath <- function(file) {
   if(!endsWith(file, ".sqlite")) file = paste0(file, ".sqlite")
   if(file.exists(file)) {
