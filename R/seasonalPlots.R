@@ -1,7 +1,7 @@
 #' Seasonal plots with quantiles for LFMC data
 #'
-#' @param speciescode Integer indicating the species code.
-#' @param sitecode Integer or a list indicating site codes.
+#' @param speciesCode Integer indicating the species code.
+#' @param siteCode Integer or a list indicating site codes.
 #' @param period String indicating if LFMC values are shown by month or fortnight.
 #' @param quantiles Vector indicating the quantiles to be displayed.
 #' @param LFMCflag Logical indicating if manually identified outliers are excluded.
@@ -10,50 +10,49 @@
 #'
 #' @examples
 #' \dontrun{
-#'    seasonalPlot(speciescode = 1, sitecode = c(1, 5),
-#'    period = "Month", quantiles = c(0.1, 0.25, 0.50, 0.75, 0.97), data = T)
+#'    seasonalPlot(speciescode = 1, sitecode = 5, period = "Month",
+#'    quantiles = c(0.1, 0.25, 0.50, 0.75, 0.97),
+#'    LFMCflag = T, AOflag = T, plotCurrentYear = T)
 #' }
 #'
 #' @return A seasonal plot by site
+#'
+#' @importFrom dplyr %>%
+#' @importFrom ggplot2 aes
 
 
-seasonalPlot <- function(speciescode = 1, sitecode = 1, period = "Fortnight",
+seasonalPlot <- function(speciesCode = 1, siteCode = 1, period = "Fortnight",
                          quantiles = c(0.10, 0.50, 0.95), LFMCflag = T, AOflag = F,
                          plotCurrentYear = F) {
 
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   rs <- DBI::dbSendQuery(lfmc_db,
-                         'SELECT ZoneName, SiteCode, SiteName, SpeciesName, Date, LFMC
+                         'SELECT ssp.SamplingSiteCode, s.SamplingSiteName, sp.SpeciesName, lfmc.Date, lfmc.LFMC
                          FROM sites_species ssp
                          INNER JOIN sites s
-                         ON ssp.SitePlotCode = s.SitePlotCode
+                         ON ssp.SamplingSiteCode = s.SamplingSiteCode
                          INNER JOIN species sp
                          ON sp.SpeciesCode = ssp.SpeciesCode
                          INNER JOIN lfmc
-                         ON lfmc.SiteXSpecies = ssp.SiteXSpecies
-                         WHERE SpeciesCode = ?')
-  dbBind(rs, list(SpeciesCode))
+                         ON lfmc.SiteSpCode = ssp.SiteSpCode
+                         WHERE sp.SpeciesCode = ?')
+
+  dbBind(rs, list(speciesCode))
   dfSp = dbFetch(rs)
   dbClearResult(rs)
   dbDisconnect(lfmc_db)
 
+  dfSp$Date = lubridate::as_date(dfSp$Date)
+
+  df = dfSp[dfSp[["SamplingSiteCode"]] == siteCode, ] # filter species dataframe by site
+
   # Exclude outliers
   if(LFMCflag == T) {
-    dfSp <- dfSp[is.na(dfSp$LFMC_flag), ]
+    dfSp <- dfSp[dfSp[["ManualOutlier"]] != 1, ]
   }
   else if(AOflag == T) {
-    dfSp <- dfSp[is.na(dfSp$AO_flag), ]
+    dfSp <- dfSp[dfSp[["AdditiveOutlier"]] != 1, ]
   }
-
-  # Filter species dataframe by requested sites
-  df = data.frame()
-  for(site in sitecode) {
-    dfSite = dfSp[dfSp[["SiteCode"]] == site, ]
-    df = rbind(df, dfSite)
-  }
-
-  df <- select(df, SiteCode, SpeciesCode, ZoneName, SiteName, Species, Date, LFMC)
-  df <- na.omit(df)
 
   # Monthly data
   if(period == "Month") {
@@ -72,44 +71,45 @@ seasonalPlot <- function(speciescode = 1, sitecode = 1, period = "Fortnight",
     stop("argument period must be 'Month' or 'Fortnight'")
   }
   # Group data by period
-  byperiod <- df %>% group_by(ZoneName, SiteName, Period)
+  byperiod <- df %>% dplyr::group_by(SamplingSiteName, Period)
 
   # Define plot
-  g <- ggplot(byperiod, aes(Period, LFMC))
+  g <- ggplot2::ggplot(byperiod, aes(Period, LFMC))
   # Draw quantiles
   quantiles <- sort(quantiles, decreasing = T)
   nquantiles = length(quantiles)
-  v_colors =  viridis(nquantiles) # set of 'nquantiles' number of colors from viridis palette
+  v_colors = viridis::viridis(nquantiles) # set of 'nquantiles' number of colors from viridis palette
   for(qtl in quantiles) {
     index = match(qtl, quantiles)
-    g <- g + stat_flquantiles(probs = c(0, qtl),
+    g <- g + ggplotFL::stat_flquantiles(probs = c(0, qtl),
                               geom = "ribbon",
                               fill = v_colors[[index]],
                               alpha = 0.80)
   }
   # Plot data from last two years
-  if(plotCurrentYear == T) {
+  if(plotCurrentYear) {
     df$Year <- lubridate::year(df$Date)
-    DataYear <- df %>% group_by(ZoneName, SiteName) %>%
-      mutate(maxYear = max(Year))
+    DataYear <- df %>% dplyr::group_by(SamplingSiteName) %>%
+      dplyr::mutate(maxYear = max(Year))
 
     # Filter data from last two years
     last_years <- DataYear %>% dplyr::filter(Year == maxYear | Year == (maxYear - 1))
-    last_years <- last_years  %>%
-      group_by(ZoneName, SiteName, PeriodLabel, Year) %>%
-      mutate(meanLFMC = mean(LFMC, na.rm = T))
-
     last_years$Year <- as.factor(last_years$Year)
+    last_years <- last_years %>%
+      dplyr::group_by(SamplingSiteName, PeriodLabel, Year) %>%
+      dplyr::mutate(meanLFMC = mean(LFMC, na.rm = T))
+
+    lastVal <- tail(last_years, 1)
 
     # Add points for penultimate and last year
-    g <- g + geom_point(data = last_years, aes(Period, meanLFMC, shape = Year))
-    g <- g + scale_shape_manual(values = c(1, 16, 0, 15, 2, 17, 5, 18))
-    g <- g + xlim(min(last_years$Period), max(last_years$Period))
-    g <- g + theme(legend.position = "bottom")
-  }
-  # Subgraphics: when more than one site per species is requested
-  if(length(sitecode > 1)) {
-    g <- g + facet_grid(.~ZoneName + SiteName, scales = "free", space = "free")
+    g <- g + ggplot2::geom_point(data = last_years, aes(Period, meanLFMC, shape = Year), size = 1)
+    g <- g + ggplot2::scale_shape_manual(values = c(1, 15))
+    g <- g + ggplot2::xlim(min(last_years$Period), max(last_years$Period))
+    g <- g + ggplot2::theme(legend.position = "bottom")
+
+    # Show last sample
+    g <- g + ggplot2::geom_point(data = lastVal, aes(Period, meanLFMC, shape = as.factor(Period)),
+                      size = 5, stroke = 1, shape = 1, colour = "red", show.legend = F)
   }
   return(g)
 }
