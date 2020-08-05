@@ -14,6 +14,7 @@ Specifies the location of the LFMC database file. This causes setting global var
 }
 \examples{
 \dontrun{
-   set_DBpath("../lfmc.sqlite")
+   setDBpath("../lfmc.sqlite")
 }
+
 }
