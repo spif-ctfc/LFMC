@@ -11,7 +11,7 @@
 #' with field 'SampleCode'.
 #' @param outlierSearch Logical to indicate if outliers search routine is run
 #'
-#' @details Mapping should be provided for at least for 'Date', 'SamplingSiteCode', 'SampleCode' and 'SpeciesCode'.
+#' @details Mapping should be provided at least for 'Date', 'SamplingSiteCode', 'SampleCode' and 'SpeciesCode'.
 #' Variables 'LFMC' and 'LeafStemRatio' are by default calculated from imported values. Variable for 'Date' can be of class \code{\link{Date}} or
 #' a string. In the latter case date strings are expected to be in \code{dateFormat}.
 #'
@@ -171,7 +171,7 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   nnew = dbAppendTable(lfmc_db, "lfmc", lfmc_new)
   cat(paste0(nnew, " new LFMC records added to database.\n"))
 
-  if(outliersSearch) {
+  if(outlierSearch) {
     outlierSearch(lfmc_db)
   }
 
