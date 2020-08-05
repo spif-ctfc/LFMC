@@ -6,6 +6,10 @@
 #' @param plotImpute Whether or not plot imputations by site_species series
 #' @param plotOutlier Whether or not plot outliers by site_species series
 #'
+#' @details Outlier search is carried out only for LFMC series with more than 15 years of data.
+#' The parameters for the ARIMA model fitted to detect outliers by LFMC series are read from 'arimaParameters.rda'.
+#' Delta parameter for TC was specified as 0.5 for Q. coccifera and 0.7 for the other species.
+#'
 #' @examples
 #' \dontrun{
 #' LFMC::setDBpath("lfmc.sqlite")
@@ -13,6 +17,8 @@
 #' outlierSearch(lfmc_db)
 #' dbDisconnect(lfmc_db)
 #' }
+#'
+#' @importFrom dplyr %>%
 #'
 #' @export
 #'
@@ -24,7 +30,7 @@ outlierSearch <- function(lfmc_db, plotImpute = F, plotOutlier = F) {
                              FROM lfmc lfmc JOIN sites_species ssp
                              ON lfmc.SiteSpCode = ssp.SiteSpCode")
 
-  lfmc_df$Date = as.Date(lfmc_df$Date, origin = "1970-01-01")
+  lfmc_df$Date = lubridate::as_date(lfmc_df$Date)
   lfmc_df$Year = lubridate::year(lfmc_df$Date)
   lfmc_df$Fortnight = ((lubridate::yday(lfmc_df$Date) - 1) %/% 14) + 1
 
@@ -43,7 +49,7 @@ outlierSearch <- function(lfmc_db, plotImpute = F, plotOutlier = F) {
     dplyr::mutate(Ayears = dplyr::n_distinct(Year)) %>%
     dplyr::filter(Ayears > 14)
 
-  lfmc_df = lfmc_df %>% tidyr::complete(Fortnight, nesting(SiteSpCode))
+  lfmc_df = lfmc_df %>% tidyr::complete(Fortnight, tidyr::nesting(SiteSpCode))
 
   for(ssp in unique(lfmc_df$SiteSpCode)) {
     series <- lfmc_df[lfmc_df$SiteSpCode == ssp, ]
@@ -69,17 +75,11 @@ outlierSearch <- function(lfmc_db, plotImpute = F, plotOutlier = F) {
     sQ = AP[AP[["SiteSpCode"]] == ssp, ]$sQ
 
     listS = list(order = c(sP, sD, sQ))
-    if(sum(is.na(listS$order)) > 0) {
-      listS = list(order = c(0, 1, 1)) # default values in tso function
-    }
+    if(sum(is.na(listS$order)) > 0) listS = list(order = c(0, 1, 1)) # default values in tso function
 
-    if(series$SpeciesCode == 2) {
-      outliers = tso(ts, types = c("AO", "TC"), tsmethod = "arima",
-                     args.tsmethod = list(order = c(p, d, q), seasonal = listS), delta = 0.5)
-    } else {
-      outliers = tso(ts, types = c("AO", "TC"), tsmethod = "arima",
-                     args.tsmethod = list(order = c(p, d, q), seasonal = listS), delta = 0.7)
-    }
+    outliers = tso(ts, types = c("AO", "TC"), tsmethod = "arima",
+                   args.tsmethod = list(order = c(p, d, q), seasonal = listS),
+                   delta = ifelse(speciesCode == 2, 0.5, 0.7))
 
     if(plotOutlier) plot(outliers)
 
