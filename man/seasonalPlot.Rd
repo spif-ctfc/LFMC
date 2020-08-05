@@ -15,6 +15,10 @@ seasonalPlot(
 )
 }
 \arguments{
+\item{speciesCode}{Integer indicating the species code.}
+
+\item{siteCode}{Integer or a list indicating site codes.}
+
 \item{period}{String indicating if LFMC values are shown by month or fortnight.}
 
 \item{quantiles}{Vector indicating the quantiles to be displayed.}
@@ -24,10 +28,6 @@ seasonalPlot(
 \item{AOflag}{Logical indicating if additive outliers are excluded.}
 
 \item{plotCurrentYear}{Logical indicating if data from the last two years are shown.}
-
-\item{speciescode}{Integer indicating the species code.}
-
-\item{sitecode}{Integer or a list indicating site codes.}
 }
 \value{
 A seasonal plot by site
@@ -37,8 +37,9 @@ Seasonal plots with quantiles for LFMC data
 }
 \examples{
 \dontrun{
-   seasonalPlot(speciescode = 1, sitecode = c(1, 5),
-   period = "Month", quantiles = c(0.1, 0.25, 0.50, 0.75, 0.97), data = T)
+   seasonalPlot(speciescode = 1, sitecode = 5, period = "Month",
+   quantiles = c(0.1, 0.25, 0.50, 0.75, 0.97),
+   LFMCflag = T, AOflag = T, plotCurrentYear = T)
 }
 
 }
