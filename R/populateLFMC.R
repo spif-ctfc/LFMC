@@ -61,7 +61,7 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   if (!("SampleCode" %in% names(varmapping))) stop ("Please supply mapping for 'SampleCode'")
   if (!("SpeciesCode" %in% names(varmapping))) stop ("Please supply mapping for 'SpeciesCode'")
 
-  if(!varmapping[["Date"]] %in% names(lfmc)) stop(paste0("Date variable '", varmapping[["Date"]], "' not found in input data frame. Check mapping."))
+  if(!varmapping[["Date"]] %in% names(lfmc)) stop (paste0("Date variable '", varmapping[["Date"]], "' not found in input data frame. Check mapping."))
 
   dates = lfmc[[varmapping[["Date"]]]]
   if (class(dates) != "Date") {
