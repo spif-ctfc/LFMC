@@ -1,9 +1,8 @@
 #' Heatmap plots for LFMC data
 #'
-#' @param variable String indicating the variable to be graphed.
-#' @param speciescode Integer indicating the species code.
-#' @param sitecode Integer or list of values indicating site codes.
-#' @param period String indicating if LFMC values are shown on a monthly or a fortnightly basis.
+#' @param speciesCode Integer indicating the species code.
+#' @param siteCode Integer indicating the site code.
+#' @param period String indicating if values are shown on a monthly or a fortnightly basis.
 #'
 #' @examples
 #' \dontrun{
@@ -12,7 +11,7 @@
 #'
 #' @return A heatmap by site
 
-heatmapLFMC <- function(variable = "LFMC", speciesCode = 1, siteCode = 1, period = "Fortnight") {
+heatmapLFMC <- function(speciesCode = 1, siteCode = 1, period = "Fortnight") {
 
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   rs <- DBI::dbSendQuery(lfmc_db,
@@ -56,14 +55,14 @@ heatmapLFMC <- function(variable = "LFMC", speciesCode = 1, siteCode = 1, period
   df$Year = as.factor(df$Year)
 
   # heatmap
-  p <- ggplot2::ggplot(df, ggplot2::aes(PeriodLabel, Year, fill = df[[variable]]))
+  p <- ggplot2::ggplot(df, ggplot2::aes(PeriodLabel, Year, fill = LFMC))
   # Axis titles
   p <- p + ggplot2::labs(x = "", y = "")
   # Plot title
   p <- p + ggplot2::geom_tile(color = "white")
   p <- p + viridis::scale_fill_viridis(name = "% LFMC", option = "viridis")
   p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 40))
-  p <- p + ggtitle(paste(df$SpeciesName, df$SamplingSiteName, sep = " - "))
+  p <- p + ggplot2::ggtitle(paste(df$SpeciesName, df$SamplingSiteName, sep = " - "))
   return(p)
 }
 
