@@ -70,7 +70,6 @@ initDB <- function(file, overwrite = FALSE) {
   DBI::dbAppendTable(lfmc_db, "species", LFMC:::speciesTable)
   DBI::dbAppendTable(lfmc_db, "sites_species", LFMC:::sitespeciesTable)
 
-
   lfmc <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE lfmc
                     (SampleCode TEXT PRIMARY KEY,
                     SiteSpCode TEXT,
