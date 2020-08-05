@@ -55,7 +55,7 @@ Fields:
 |                  | DryStem          | real      |                                                | NA          | 
 |                  | DryLeaf          | real      |                                                | NA          | 
 |                  | LeafStemRatio    | real      | derived attribute computed from DryLeaf and DryStem | NA     | 
-|                  | LFMCOutlier      | numeric   | a flag indicating LFMC outliers manually identified | NA     |
+|                  | ManualOutlier    | numeric   | a flag indicating LFMC outliers manually identified | NA     |
 |                  | AdditiveOutlier  | numeric   | a flag indicating LFMC additive outliers       | NA          |
 |                  | PhenologyCode    | integer   |                                                | Foreign Key |
 |                  | Notes            | text      |                                                | NA          | 
