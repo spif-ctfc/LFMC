@@ -16,6 +16,11 @@ outlierSearch(lfmc_db, plotImpute = F, plotOutlier = F)
 \description{
 Routine for search and flagg outliers in LFMC data
 }
+\details{
+Outlier search is carried out only for LFMC series with more than 15 years of data.
+The parameters for the ARIMA model fitted to detect outliers by LFMC series are read from 'arimaParameters.rda'.
+Delta parameter for TC was specified as 0.5 for Q. coccifera and 0.7 for the other species.
+}
 \examples{
 \dontrun{
 LFMC::setDBpath("lfmc.sqlite")
