@@ -91,19 +91,9 @@ initDB <- function(file, overwrite = FALSE) {
   phenology <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE phenology
                     (PhenologyCode INTEGER PRIMARY KEY,
                     PhenologySystem INTEGER,
-                    Phenology INTEGER
+                    PhenologicalStage TEXT
                     )")
   DBI::dbClearResult(phenology)
-
-  soil_temp <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_temperature
-                    (SensorCode TEXT PRIMARY KEY,
-                    SamplingSiteCode INTEGER,
-                    Date NUMERIC, Time NUMERIC,
-                    Temperature REAL,
-                    FOREIGN KEY(SamplingSiteCode)
-                    REFERENCES sites(SamplingSiteCode)
-                    )")
-  DBI::dbClearResult(soil_temp)
 
   tdr <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE tdr_sensor
                     (SensorCode TEXT PRIMARY KEY,
@@ -111,11 +101,12 @@ initDB <- function(file, overwrite = FALSE) {
                     )")
   DBI::dbClearResult(tdr)
 
-  soil_moist <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_moisture
+  soil_measurements <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_measurements
                     (SMCode TEXT PRIMARY KEY,
                     SensorCode TEXT,
                     Date NUMERIC, Time NUMERIC,
                     Moisture REAL,
+                    Temperature REAL,
                     FOREIGN KEY(SensorCode)
                     REFERENCES sites(tdr_sensor)
                     )")

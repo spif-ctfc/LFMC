@@ -29,51 +29,47 @@ Fields:
   - Foreign key: column referencing the primary key from another entity (referenced entity)
 
 
-| Entity           | Variable         |	Data type |  Description                                   | Key         |
-|------------------|------------------|-----------|------------------------------------------------|-------------|
-| SITES            | SamplingSiteCode | integer   | not null, unique                               | Primary Key |
-|                  | SamplingSiteName | text      |                                                | NA          |
-|                  | LocalityCode     | integer   |                                                | NA          |
-|                  | LocalityName     | text      |                                                | NA          |
-|                  | Latitude         | real      |                                                | NA          |
-|                  | Longitude        | real      |                                                | NA          |
-|                  | StartYear        | integer   | year the plot was started                      | NA          | 
-|                  | EndYear          | integer   | year the plot was finalized                    | NA          | 
-|                  | SensorCode       | text      | unique code for TDR sensor                     | Foreign Key | 
-| SPECIES          | SpeciesCode      | integer   | not null, unique,                              | Primary Key |
-|                  | SpeciesName      | text      | scientific name                                | NA          |
-|                  | SpeciesCAT       | text      | catalan common name                            | NA          | 
-| SITES_SPECIES    | SiteSpCode       | text      | not null, unique                               | Primary Key |
-|                  | SamplingSiteCode | integer   | not null                                       | Foreign Key |
-|                  | SpeciesCode      | integer   | not null                                       | Foreign Key |
-| LFMC             | SampleCode       | text      | not null, unique                               | Primary Key |
-|                  | SiteSpCode       | text      | not null                                       | Foreign Key |
-|                  | Date             | numeric   |                                                | NA          |
-|                  | FreshMass        | real      |                                                | NA          | 
-|                  | DryMass          | real      |                                                | NA          | 
-|                  | LFMC             | real      | derived attribute computed from FreshMass and DryMass| NA    | 
-|                  | DryStem          | real      |                                                | NA          | 
-|                  | DryLeaf          | real      |                                                | NA          | 
-|                  | LeafStemRatio    | real      | derived attribute computed from DryLeaf and DryStem | NA     | 
-|                  | ManualOutlier    | numeric   | a flag indicating LFMC outliers manually identified | NA     |
-|                  | AdditiveOutlier  | numeric   | a flag indicating LFMC additive outliers       | NA          |
-|                  | PhenologyCode    | integer   |                                                | Foreign Key |
-|                  | Notes            | text      |                                                | NA          | 
-| PHENOLOGY        | PhenologyCode    | integer   | not null, unique                               | Primary Key |
+| Entity           | Variable         |	Data type |  Description                                                 | Key         |
+|------------------|------------------|-----------|--------------------------------------------------------------|-------------|
+| SITES            | SamplingSiteCode | integer   | not null, unique code to identify the sambpling site         | Primary Key |
+|                  | SamplingSiteName | text      | name of the sampling site                                    | NA          |
+|                  | LocalityCode     | integer   | unique code to identify the locality where  the sampling sites are located | NA          |
+|                  | LocalityName     | text      | name of the locality                                         | NA          |
+|                  | Latitude         | real      | geographic coordinates                                       | NA          |
+|                  | Longitude        | real      | geographic coordinates                                       | NA          |
+|                  | StartYear        | integer   | year when measurements started on the sampling site          | NA          | 
+|                  | EndYear          | integer   | year when measurements started on the sampling site          | NA          | 
+|                  | SensorCode       | text      | unique code for TDR sensor                                   | Foreign Key | 
+| SPECIES          | SpeciesCode      | integer   | not null, unique code to identify the species                | Primary Key |
+|                  | SpeciesName      | text      | scientific name                                              | NA          |
+|                  | SpeciesCAT       | text      | catalan common name                                          | NA          | 
+| SITES_SPECIES    | SiteSpCode       | text      | not null, unique                                             | Primary Key |
+|                  | SamplingSiteCode | integer   | not null, unique value to identify the locality and the sampling site | Foreign Key |
+|                  | SpeciesCode      | integer   | not null                                                     | Foreign Key |
+| LFMC             | SampleCode       | text      | not null, unique value to identify the sample                | Primary Key |
+|                  | SiteSpCode       | text      | not null                                                     | Foreign Key |
+|                  | Date             | numeric   | sampling data                                                | NA          |
+|                  | FreshMass        | real      | fresh weight of samples                                      | NA          | 
+|                  | DryMass          | real      | dry weight of samples                                        | NA          | 
+|                  | LFMC             | real      | derived attribute computed from FreshMass and DryMass (FM - DM / DM) | NA          | 
+|                  | DryStem          | real      | stem component of DryMass measurement                        | NA          | 
+|                  | DryLeaf          | real      | leaf component of DryMass measurement                        | NA          | 
+|                  | LeafStemRatio    | real      | derived attribute computed from DryLeaf and DryStem          | NA          | 
+|                  | ManualOutlier    | numeric   | a flag indicating LFMC outliers manually identified          | NA          |
+|                  | AdditiveOutlier  | numeric   | a flag indicating LFMC additive outliers                     | NA          |
+|                  | PhenologyCode    | integer   |                                                              | Foreign Key |
+|                  | Notes            | text      |                                                              | NA          | 
+| PHENOLOGY        | PhenologyCode    | integer   | not null, unique value to identify the phenological stage    | Primary Key |
 |                  | PhenologySystem  | integer   | old method = 1, current method = 2, for more details see the section 'Phenology coding' below | NA |
-|                  | Phenology        | integer   |                                                | NA          | 
-| SOIL_TEMPERATURE | SensorCode       | text      | not null, unique                               | Primary Key |
-|                  | SamplingSiteCode | integer   | not null                                       | Foreign Key |
-|                  | Date             | numeric   |                                                | NA          |
-|                  | Time             | numeric   |                                                | NA          |
-|                  | Temperature      | real      | soil temperature measured at different depths  | NA          |
-| TDR_SENSOR       | SensorCode       | text      | not null, unique                               | Primary Key |
-|                  | SoilLevel        | integer   |                                                | NA          |
-| SOIL_MOISTURE    | SMCode           | text      | not null, unique                               | Primary Key |
-|                  | SensorCode       | text      | not null, unique                               | Foreign Key |
-|                  | Date             | numeric   |                                                | NA          |
-|                  | Time             | numeric   |                                                | NA          |
-|                  | Moisture         | real      | soil moisture measured at different depths     | NA          |
+|                  | PhenologicalStage| text      | description of the phenological stage                        | NA          | 
+| TDR_SENSOR       | SensorCode       | text      | not null, unique value to identify the sensor                | Primary Key |
+|                  | SoilLevel        | integer   | soil depth at which measurements are made                    | NA          |
+| SOIL_MEASUREMENTS| SMCode           | text      | not null, unique                                             | Primary Key |
+|                  | SensorCode       | text      | not null, unique                                             | Foreign Key |
+|                  | Date             | numeric   |                                                              | NA          |
+|                  | Time             | numeric   |                                                              | NA          |
+|                  | Moisture         | real      | soil moisture measured at different depths                   | NA          |
+|                  | Temperature      | real      | soil temperature measured at different depths                | NA          |
 
 
 ## Phenology coding

@@ -53,6 +53,7 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
                                         "DryMass" = "PES_SEC",
                                         "DryStem" = "PES_TIGES",
                                         "DryLeaf" = "PES_FULLES",
+                                        "PhenologyCode" = "fenologia",
                                         "Notes" = "Observacions"),
                          overwrite = FALSE, outlierSearch = F) {
 
@@ -118,14 +119,12 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
     else stop(paste0("DryStem variable '", varmapping[["DryStem"]], "' not found in input data frame. Check mapping."))
   }
 
-  if("DryLeaf" %in% names(varmapping)) {
-    if(varmapping[["DryLeaf"]] %in% names(lfmc)) lfmc_df[["DryLeaf"]] = as.numeric(lfmc[[varmapping[["DryLeaf"]]]])
-    else stop(paste0("DryLeaf variable '", varmapping[["DryLeaf"]], "' not found in input data frame. Check mapping."))
-  }
-
   lfmc_df[["LeafStemRatio"]] = lfmc_df[["DryLeaf"]] / lfmc_df[["DryStem"]]
 
-  # lfmc_df[["PhenologyCode"]]
+  if("PhenologyCode" %in% names(varmapping)) {
+    if(varmapping[["PhenologyCode"]] %in% names(lfmc)) lfmc_df[["PhenologyCode"]] = lfmc[[varmapping[["PhenologyCode"]]]]
+    else stop(paste0("PhenologyCode variable '", varmapping[["PhenologyCode"]], "' not found in input data frame. Check mapping."))
+  }
 
   if("Notes" %in% names(varmapping)) {
     if(varmapping[["Notes"]] %in% names(lfmc)) lfmc_df[["Notes"]] = lfmc[[varmapping[["Notes"]]]]
