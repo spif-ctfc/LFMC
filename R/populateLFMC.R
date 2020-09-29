@@ -65,16 +65,16 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
 
   dates = lfmc[[varmapping[["Date"]]]]
   if (class(dates) != "Date") {
-    dates = as.Date(dates, format = dateFormat)
+    dates = as.Date(dates, format = dateFormat, origin = "1970-01-01")
   }
   # Date range to be imported
   sel = rep(T, nrow(lfmc))
   if (!is.null(dateIni)) {
-    dateIni = as.Date(dateIni, format = dateFormat)
+    dateIni = as.Date(dateIni, format = dateFormat, origin = "1970-01-01")
     sel = sel & dates >= dateIni
   }
   if (!is.null(dateFin)) {
-    dateFin = as.Date(dateFin, format = dateFormat)
+    dateFin = as.Date(dateFin, format = dateFormat, origin = "1970-01-01")
     sel = sel & dates <= dateFin
   }
   dates = dates[sel]
@@ -171,7 +171,7 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   nnew = dbAppendTable(lfmc_db, "lfmc", lfmc_new)
   cat(paste0(nnew, " new LFMC records added to database.\n"))
 
-  if(outliersSearch) {
+  if(outlierSearch) {
     outlierSearch(lfmc_db)
   }
 
