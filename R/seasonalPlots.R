@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'    seasonalPlot(speciesCode = 1, siteCode = c(1, 5),
+#'    seasonalPlot(speciesCode = 1, siteCode = 5,
 #'    period = "Month", quantiles = c(0.1, 0.25, 0.50, 0.75, 0.97), data = T)
 #' }
 #'
@@ -51,15 +51,9 @@ seasonalPlot <- function(speciesCode = 1, siteCode = 1, period = "Fortnight",
   }
 
   # Filter species dataframe by requested sites
-  df = data.frame()
-  for(site in siteCode) {
-    dfSite = dfSp[dfSp[["SamplingSiteCode"]] == site, ]
-    df = rbind(df, dfSite)
-  }
+  df = dfSp[dfSp[["SamplingSiteCode"]] == siteCode, ]
 
-  # df <- na.omit(df)
-
-  # Monthly data
+    # Monthly data
   if(period == "Month") {
     df$Period <- as.numeric(lubridate::month(df$Date))
     df$PeriodLabel <- factor(df$Period, levels = as.character(1:12),
@@ -104,16 +98,18 @@ seasonalPlot <- function(speciesCode = 1, siteCode = 1, period = "Fortnight",
       mutate(meanLFMC = mean(LFMC, na.rm = T))
 
     last_years$Year <- as.factor(last_years$Year)
+    # Last recorded LFMC value
+    lastVal <- tail(last_years, 1)
 
     # Add points for penultimate and last year
-    g <- g + geom_point(data = last_years, aes(Period, meanLFMC, shape = Year))
-    g <- g + scale_shape_manual(values = c(1, 16, 0, 15, 2, 17, 5, 18))
+    g <- g + geom_point(data = last_years, aes(Period, meanLFMC, shape = Year), size = 1)
+    # Define a vector of shapes: cases with multiple sites and different last two years by sites
+    g <- g + scale_shape_manual(values = c(1, 15))
     g <- g + xlim(min(last_years$Period), max(last_years$Period))
     g <- g + theme(legend.position = "bottom")
-  }
-  # Subgraphics: when more than one site per species is requested
-  if(length(siteCode > 1)) {
-    g <- g + facet_grid(.~LocalityName + SamplingSiteName, scales = "free", space = "free")
+    # Show last recorded LFMC value
+    g <- g + geom_point(data = lastVal, aes(Period, meanLFMC, shape = as.factor(Period)),
+                        size = 5, stroke = 1, shape = 1, colour = "red", show.legend = F)
   }
   return(g)
 }
