@@ -34,7 +34,7 @@
 #'
 #' # Parse records from another file using another (identity) mapping
 #' varmapping2 = c("Date" = "DATA", "SamplingSiteCode"  = "CODI_PARCELA",
-#'                 "SampleCode" = "NUM_MOSTRA", SpeciesCode = "CODI_ESPECIE",
+#'                 "SampleCode" = "NUM_MOSTRA", "SpeciesCode" = "CODI_ESPECIE",
 #'                 "FreshMass" = "PES_FRESC", "DryMass" = "PES_SEC",
 #'                 "DryStem" = "PES_TIGES", "DryLeaf" = "PES_FULLES",
 #'                 "Notes" = "Observacions")

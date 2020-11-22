@@ -14,11 +14,11 @@ heatmapLFMC(
 \arguments{
 \item{variable}{String indicating the variable to be graphed.}
 
+\item{speciesCode}{Integer indicating the species code.}
+
+\item{siteCode}{Integer or list of values indicating site codes.}
+
 \item{period}{String indicating if LFMC values are shown on a monthly or a fortnightly basis.}
-
-\item{speciescode}{Integer indicating the species code.}
-
-\item{sitecode}{Integer or list of values indicating site codes.}
 }
 \value{
 A heatmap by site
@@ -28,7 +28,7 @@ Heatmap plots for LFMC data
 }
 \examples{
 \dontrun{
-   heatmapLFMC(variable = "LFMC", speciescode = 5, sitecode = 50, period = "Month")
+   heatmapLFMC(variable = "LFMC", speciesCode = 5, siteCode = 50, period = "Month")
 }
 
 }

@@ -5,8 +5,8 @@
 \title{Seasonal plots with quantiles for LFMC data}
 \usage{
 seasonalPlot(
-  speciescode = 1,
-  sitecode = 1,
+  speciesCode = 1,
+  siteCode = 1,
   period = "Fortnight",
   quantiles = c(0.1, 0.5, 0.95),
   LFMCflag = T,
@@ -15,9 +15,9 @@ seasonalPlot(
 )
 }
 \arguments{
-\item{speciescode}{Integer indicating the species code.}
+\item{speciesCode}{Integer indicating the species code.}
 
-\item{sitecode}{Integer or a list indicating site codes.}
+\item{siteCode}{Integer or a list indicating site codes.}
 
 \item{period}{String indicating if LFMC values are shown by month or fortnight.}
 
@@ -37,7 +37,7 @@ Seasonal plots with quantiles for LFMC data
 }
 \examples{
 \dontrun{
-   seasonalPlot(speciescode = 1, sitecode = c(1, 5),
+   seasonalPlot(speciesCode = 1, siteCode = c(1, 5),
    period = "Month", quantiles = c(0.1, 0.25, 0.50, 0.75, 0.97), data = T)
 }
 

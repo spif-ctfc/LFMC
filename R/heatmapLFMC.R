@@ -1,13 +1,13 @@
 #' Heatmap plots for LFMC data
 #'
 #' @param variable String indicating the variable to be graphed.
-#' @param speciescode Integer indicating the species code.
-#' @param sitecode Integer or list of values indicating site codes.
+#' @param speciesCode Integer indicating the species code.
+#' @param siteCode Integer or list of values indicating site codes.
 #' @param period String indicating if LFMC values are shown on a monthly or a fortnightly basis.
 #'
 #' @examples
 #' \dontrun{
-#'    heatmapLFMC(variable = "LFMC", speciescode = 5, sitecode = 50, period = "Month")
+#'    heatmapLFMC(variable = "LFMC", speciesCode = 5, siteCode = 50, period = "Month")
 #' }
 #'
 #' @return A heatmap by site
@@ -63,7 +63,7 @@ heatmapLFMC <- function(variable = "LFMC", speciesCode = 1, siteCode = 1, period
   p <- p + ggplot2::geom_tile(color = "white")
   p <- p + viridis::scale_fill_viridis(name = "% LFMC", option = "viridis")
   p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 40))
-  p <- p + ggtitle(paste(df$SpeciesName, df$SamplingSiteName, sep = " - "))
+  p <- p + ggplot2::ggtitle(paste(df$SpeciesName, df$SamplingSiteName, sep = " - "))
   return(p)
 }
 
