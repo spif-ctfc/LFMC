@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Init DB
+#' # Initiate data base
 #'
 #' initDB("../lfmc", overwrite = T)
 #'
@@ -29,7 +29,7 @@
 #'
 #' lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 #' lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
-#' populateLFMC(lfmc)
+#' populate_lfmc(lfmc)
 #'
 #'
 #' # Parse records from another file using another (identity) mapping
@@ -141,7 +141,7 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   }
 
   # Connect to database
-  if (!exists("lfmcdbfile", envir = globalenv())) stop ("Use set_DBtable() to load database")
+  if (!exists("lfmcdbfile", envir = globalenv())) stop ("Use setDBpath() to load database")
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   lfmc_table = DBI::dbReadTable(lfmc_db, "lfmc")
   # Records existing in the database
