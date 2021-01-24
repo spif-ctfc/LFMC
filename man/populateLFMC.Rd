@@ -46,7 +46,7 @@ allows adding only new records even if the input data frame contains records alr
 }
 \examples{
 \dontrun{
-# Initiate data base
+# Init DB
 
 initDB("../lfmc", overwrite = T)
 
@@ -54,7 +54,7 @@ initDB("../lfmc", overwrite = T)
 
 lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
-populate_lfmc(lfmc)
+populateLFMC(lfmc)
 
 
 # Parse records from another file using another (identity) mapping

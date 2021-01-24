@@ -7,9 +7,9 @@
 initDB(file, overwrite = FALSE)
 }
 \arguments{
-\item{file}{Database file name}
+\item{file}{Database filename}
 
-\item{overwrite}{Boolean flag to force overwriting an existing file}
+\item{overwrite}{Boolean flag to force overwritting an existing file}
 }
 \description{
 Initializes an empty LFMC database with the appropriate database structure on a new file

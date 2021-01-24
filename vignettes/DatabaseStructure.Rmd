@@ -4,7 +4,7 @@ author: "Ruth Delgado-Dávila / Eva Gabriel / Miquel De Caceres"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{LFMC database structure}
+  %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
