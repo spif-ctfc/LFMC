@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Init DB
+#' # Initiate data base
 #'
 #' initDB("../lfmc", overwrite = T)
 #'
@@ -29,14 +29,15 @@
 #'
 #' lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 #' lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
-#' populateLFMC(lfmc)
+#' populate_lfmc(lfmc)
 #'
 #'
 #' # Parse records from another file using another (identity) mapping
 #' varmapping2 = c("Date" = "DATA", "SamplingSiteCode"  = "CODI_PARCELA",
-#'                 "SampleCode" = "NUM_MOSTRA", "FreshMass" = "PES_FRESC",
-#'                 "DryMass" = "PES_SEC", "DryStem" = "PES_TIGES",
-#'                 "DryLeaf" = "PES_FULLES", "Notes" = "Observacions")
+#'                 "SampleCode" = "NUM_MOSTRA", "SpeciesCode" = "CODI_ESPECIE",
+#'                 "FreshMass" = "PES_FRESC", "DryMass" = "PES_SEC",
+#'                 "DryStem" = "PES_TIGES", "DryLeaf" = "PES_FULLES",
+#'                 "Notes" = "Observacions")
 #' lfmc2 = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 #' lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
 #' populateLFMC(lfmc2, varmapping = varmapping2)
@@ -66,16 +67,16 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
 
   dates = lfmc[[varmapping[["Date"]]]]
   if (class(dates) != "Date") {
-    dates = as.Date(dates, format = dateFormat)
+    dates = as.Date(dates, format = dateFormat, origin = "1970-01-01")
   }
   # Date range to be imported
   sel = rep(T, nrow(lfmc))
   if (!is.null(dateIni)) {
-    dateIni = as.Date(dateIni, format = dateFormat)
+    dateIni = as.Date(dateIni, format = dateFormat, origin = "1970-01-01")
     sel = sel & dates >= dateIni
   }
   if (!is.null(dateFin)) {
-    dateFin = as.Date(dateFin, format = dateFormat)
+    dateFin = as.Date(dateFin, format = dateFormat, origin = "1970-01-01")
     sel = sel & dates <= dateFin
   }
   dates = dates[sel]
@@ -139,7 +140,7 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   }
 
   # Connect to database
-  if (!exists("lfmcdbfile", envir = globalenv())) stop ("Use set_DBtable() to load database")
+  if (!exists("lfmcdbfile", envir = globalenv())) stop ("Use setDBpath() to load database")
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   lfmc_table = DBI::dbReadTable(lfmc_db, "lfmc")
   # Records existing in the database

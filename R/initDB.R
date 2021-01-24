@@ -2,8 +2,8 @@
 #'
 #' Initializes an empty LFMC database with the appropriate database structure on a new file
 #'
-#' @param file Database filename
-#' @param overwrite Boolean flag to force overwritting an existing file
+#' @param file Database file name
+#' @param overwrite Boolean flag to force overwriting an existing file
 #'
 #' @examples
 #'
@@ -26,42 +26,48 @@ initDB <- function(file, overwrite = FALSE) {
 
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), file)
 
-  ## Init empty tables
+  ## Initiate empty tables
 
-  sites <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites
-                    (
-                    SamplingSiteCode INTEGER PRIMARY KEY,
-                    SamplingSiteName TEXT,
-                    LocalityCode INTEGER,
-                    LocalityName TEXT,
-                    Longitude REAL,
-                    Latitude REAL,
-                    StartYear INTEGER,
-                    EndYear INTEGER,
-                    SensorCode TEXT,
-                    FOREIGN KEY(SensorCode)
-                    REFERENCES tdr_sensor(SensorCode)
-                    )")
+  sites <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE sites(
+  SamplingSiteCode INTEGER PRIMARY KEY,
+  SamplingSiteName TEXT,
+  LocalityCode INTEGER,
+  LocalityName TEXT,
+  Longitude REAL,
+  Latitude REAL,
+  StartYear INTEGER,
+  EndYear INTEGER,
+  SensorCode TEXT,
+  FOREIGN KEY(SensorCode)
+  REFERENCES tdr_sensor(SensorCode)
+  )"
+  )
   DBI::dbClearResult(sites)
 
-  species <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE species
-                    (
-                    SpeciesCode INTEGER PRIMARY KEY,
-                    SpeciesName TEXT,
-                    SpeciesCAT TEXT
-                    )")
+  species <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE species(
+  SpeciesCode INTEGER PRIMARY KEY,
+  SpeciesName TEXT,
+  SpeciesCAT TEXT
+  )"
+  )
   DBI::dbClearResult(species)
 
-  sites_species <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE sites_species
-                    (
-                    SiteSpCode TEXT PRIMARY KEY,
-                    SamplingSiteCode INTEGER NOT NULL,
-                    SpeciesCode INTEGER NOT NULL,
-                    FOREIGN KEY(SamplingSiteCode)
-                    REFERENCES sites(SamplingSiteCode),
-                    FOREIGN KEY(SpeciesCode)
-                    REFERENCES species(SpeciesCode)
-                    )")
+  sites_species <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE sites_species(
+  SiteSpCode TEXT PRIMARY KEY,
+  SamplingSiteCode INTEGER NOT NULL,
+  SpeciesCode INTEGER NOT NULL,
+  FOREIGN KEY(SamplingSiteCode)
+  REFERENCES sites(SamplingSiteCode),
+  FOREIGN KEY(SpeciesCode)
+  REFERENCES species(SpeciesCode)
+  )"
+  )
   DBI::dbClearResult(sites_species)
 
   # Populate sites, species, and sites_species tables
@@ -70,47 +76,70 @@ initDB <- function(file, overwrite = FALSE) {
   DBI::dbAppendTable(lfmc_db, "species", LFMC:::speciesTable)
   DBI::dbAppendTable(lfmc_db, "sites_species", LFMC:::sitespeciesTable)
 
-  lfmc <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE lfmc
-                    (SampleCode TEXT PRIMARY KEY,
-                    SiteSpCode TEXT,
-                    Date NUMERIC,
-                    FreshMass REAL, DryMass REAL,
-                    LFMC REAL,
-                    DryStem REAL, DryLeaf REAL,
-                    LeafStemRatio REAL,
-                    ManualOutlier NUMERIC,
-                    AdditiveOutlier NUMERIC,
-                    PhenologyCode INTEGER, Notes TEXT,
-                    FOREIGN KEY(PhenologyCode)
-                    REFERENCES phenology(PhenologyCode)
-                    FOREIGN KEY(SiteSpCode)
-                    REFERENCES sites_species(SiteSpCode)
-                    )")
+  lfmc <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE lfmc(
+  SampleCode TEXT PRIMARY KEY,
+  SiteSpCode TEXT,
+  Date NUMERIC,
+  FreshMass REAL, DryMass REAL,
+  LFMC REAL,
+  DryStem REAL, DryLeaf REAL,
+  LeafStemRatio REAL,
+  ManualOutlier NUMERIC,
+  AdditiveOutlier NUMERIC,
+  PhenologyCode INTEGER, Notes TEXT,
+  FOREIGN KEY(PhenologyCode)
+  REFERENCES phenology(PhenologyCode)
+  FOREIGN KEY(SiteSpCode)
+  REFERENCES sites_species(SiteSpCode)
+  )"
+  )
   DBI::dbClearResult(lfmc)
 
-  phenology <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE phenology
-                    (PhenologyCode INTEGER PRIMARY KEY,
-                    PhenologySystem INTEGER,
-                    PhenologicalStage TEXT
-                    )")
+  phenology <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE phenology(
+  PhenologyCode INTEGER PRIMARY KEY,
+  PhenologySystem INTEGER,
+  Phenology INTEGER
+  )"
+  )
   DBI::dbClearResult(phenology)
 
-  tdr <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE tdr_sensor
-                    (SensorCode TEXT PRIMARY KEY,
-                    SoilLevel INTEGER
-                    )")
+  soil_temp <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE soil_temperature(
+  SensorCode TEXT PRIMARY KEY,
+  SamplingSiteCode INTEGER,
+  Date NUMERIC, Time NUMERIC,
+  Temperature REAL,
+  FOREIGN KEY(SamplingSiteCode)
+  REFERENCES sites(SamplingSiteCode)
+  )"
+  )
+  DBI::dbClearResult(soil_temp)
+
+  tdr <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE tdr_sensor
+  (SensorCode TEXT PRIMARY KEY,
+  SoilLevel INTEGER
+  )"
+  )
   DBI::dbClearResult(tdr)
 
-  soil_measurements <- DBI::dbSendStatement(lfmc_db, "CREATE TABLE soil_measurements
-                    (SMCode TEXT PRIMARY KEY,
-                    SensorCode TEXT,
-                    Date NUMERIC, Time NUMERIC,
-                    Moisture REAL,
-                    Temperature REAL,
-                    FOREIGN KEY(SensorCode)
-                    REFERENCES sites(tdr_sensor)
-                    )")
-
+  soil_moist <- DBI::dbSendStatement(
+  lfmc_db,
+  "CREATE TABLE soil_moisture
+  (SMCode TEXT PRIMARY KEY,
+  SensorCode TEXT,
+  Date NUMERIC, Time NUMERIC,
+  Moisture REAL,
+  FOREIGN KEY(SensorCode)
+  REFERENCES sites(tdr_sensor)
+  )"
+  )
   DBI::dbClearResult(soil_moist)
 
   DBI::dbDisconnect(lfmc_db)

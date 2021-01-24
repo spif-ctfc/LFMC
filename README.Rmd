@@ -10,7 +10,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.path = "README-")
 
 ## Introduction
 
-Package **LFMC** is designed to assist the creation, management and analysis of the fine fuel moisture content (LFMC) database of the *Servei de Prevenció d'Incendis* (SPIF) of the Catalan administration.
+Package **LFMC** is designed to assist the creation, management, and analysis of the live fuel moisture content (LFMC) database of the *Servei de Prevenció d’Incendis Forestals* (SPIF) of the Catalan administration. The database is the outcome of a biweekly monitoring of five Mediterranean plant species in nine catalonian study sites since 1998.
 
 ## Package installation
 

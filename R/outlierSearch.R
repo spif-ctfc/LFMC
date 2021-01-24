@@ -25,10 +25,13 @@
 
 outlierSearch <- function(lfmc_db, plotImpute = F, plotOutlier = F) {
 
-  lfmc_df <- DBI::dbGetQuery(lfmc_db, "SELECT lfmc.SiteSpCode, lfmc.Date, lfmc.LFMC, lfmc.AdditiveOutlier,
-                             ssp.SpeciesCode, ssp.SamplingSiteCode
-                             FROM lfmc lfmc JOIN sites_species ssp
-                             ON lfmc.SiteSpCode = ssp.SiteSpCode")
+  lfmc_df <- DBI::dbGetQuery(
+  lfmc_db,
+  "SELECT lfmc.SiteSpCode, lfmc.Date, lfmc.LFMC, lfmc.AdditiveOutlier,
+  ssp.SpeciesCode, ssp.SamplingSiteCode
+  FROM lfmc lfmc JOIN sites_species ssp
+  ON lfmc.SiteSpCode = ssp.SiteSpCode"
+  )
 
   lfmc_df$Date = lubridate::as_date(lfmc_df$Date)
   lfmc_df$Year = lubridate::year(lfmc_df$Date)
@@ -77,9 +80,13 @@ outlierSearch <- function(lfmc_db, plotImpute = F, plotOutlier = F) {
     listS = list(order = c(sP, sD, sQ))
     if(sum(is.na(listS$order)) > 0) listS = list(order = c(0, 1, 1)) # default values in tso function
 
-    outliers = tso(ts, types = c("AO", "TC"), tsmethod = "arima",
-                   args.tsmethod = list(order = c(p, d, q), seasonal = listS),
-                   delta = ifelse(speciesCode == 2, 0.5, 0.7))
+    if(series$SpeciesCode == 2) {
+      outliers = tsoutliers::tso(ts, types = c("AO", "TC"), tsmethod = "arima",
+                     args.tsmethod = list(order = c(p, d, q), seasonal = listS), delta = 0.5)
+    } else {
+      outliers = tsoutliers::tso(ts, types = c("AO", "TC"), tsmethod = "arima",
+                     args.tsmethod = list(order = c(p, d, q), seasonal = listS), delta = 0.7)
+    }
 
     if(plotOutlier) plot(outliers)
 

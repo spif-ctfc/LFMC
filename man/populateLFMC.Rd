@@ -47,7 +47,7 @@ allows adding only new records even if the input data frame contains records alr
 }
 \examples{
 \dontrun{
-# Init DB
+# Initiate data base
 
 initDB("../lfmc", overwrite = T)
 
@@ -55,14 +55,15 @@ initDB("../lfmc", overwrite = T)
 
 lfmc = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 lfmc$DATA = openxlsx::convertToDate(lfmc$DATA)
-populateLFMC(lfmc)
+populate_lfmc(lfmc)
 
 
 # Parse records from another file using another (identity) mapping
 varmapping2 = c("Date" = "DATA", "SamplingSiteCode"  = "CODI_PARCELA",
-                "SampleCode" = "NUM_MOSTRA", "FreshMass" = "PES_FRESC",
-                "DryMass" = "PES_SEC", "DryStem" = "PES_TIGES",
-                "DryLeaf" = "PES_FULLES", "Notes" = "Observacions")
+                "SampleCode" = "NUM_MOSTRA", "SpeciesCode" = "CODI_ESPECIE",
+                "FreshMass" = "PES_FRESC", "DryMass" = "PES_SEC",
+                "DryStem" = "PES_TIGES", "DryLeaf" = "PES_FULLES",
+                "Notes" = "Observacions")
 lfmc2 = openxlsx::read.xlsx("../LFMC_spif/2019.xlsx")
 lfmc2$Date = openxlsx::convertToDate(lfmc2$Date)
 populateLFMC(lfmc2, varmapping = varmapping2)
