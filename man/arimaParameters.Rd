@@ -4,7 +4,8 @@
 \name{arimaParameters}
 \alias{arimaParameters}
 \title{ARIMA parameters}
-\format{A data frame with 42 rows and 10 columns:
+\format{
+A data frame with 42 rows and 10 columns:
 \describe{
   \item{SamplingSiteCode}{Unique code of sampling locality and site}
   \item{SpeciesCode}{Unique species code}
@@ -16,7 +17,8 @@
   \item{sD}{seasonal differencing}
   \item{sQ}{seasonal MA order}
   \item{Method}{fitting method used in auto.arima function}
-}}
+}
+}
 \usage{
 arimaParameters
 }

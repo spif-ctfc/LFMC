@@ -27,5 +27,4 @@ Imports:
     tsoutliers
 Depends: R (>= 3.4.0), DBI, RSQLite
 VignetteBuilder: knitr, utils
-RoxygenNote: 7.0.2
-
+RoxygenNote: 7.1.1

@@ -11,7 +11,8 @@ populateLFMC(
   dateFormat = "\%Y-\%m-\%d",
   varmapping = c(Date = "DATA", SamplingSiteCode = "CODI_PARCELA", SpeciesCode =
     "CODI_ESPECIE", SampleCode = "NUM_MOSTRA", FreshMass = "PES_FRESC", DryMass =
-    "PES_SEC", DryStem = "PES_TIGES", DryLeaf = "PES_FULLES", Notes = "Observacions"),
+    "PES_SEC", DryStem = "PES_TIGES", DryLeaf = "PES_FULLES", PhenologyCode =
+    "fenologia", Notes = "Observacions"),
   overwrite = FALSE,
   outlierSearch = F
 )

@@ -6,7 +6,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'    setDBpath("../lfmc.sqlite")
+#'    setDBpath("../data/lfmc.sqlite")
 #' }
 #'
 #' @export
