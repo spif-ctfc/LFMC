@@ -16,12 +16,12 @@ heatmapLFMC(
 
 \item{speciesCode}{Integer indicating the species code.}
 
-\item{siteCode}{Integer or list of values indicating site codes.}
+\item{siteCode}{Integer indicating the site code.}
 
 \item{period}{String indicating if LFMC values are shown on a monthly or a fortnightly basis.}
 }
 \value{
-A heatmap by site
+A heatmap by species and site
 }
 \description{
 Heatmap plots for LFMC data
