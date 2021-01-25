@@ -10,8 +10,7 @@ seasonalPlot(
   period = "Fortnight",
   MOutliers = T,
   AOutliers = F,
-  plotCurrentYear = F,
-  df = T
+  plotCurrentYear = F
 )
 }
 \arguments{
@@ -26,11 +25,9 @@ seasonalPlot(
 \item{AOutliers}{Logical indicating if additive outliers are excluded.}
 
 \item{plotCurrentYear}{Logical indicating if data from the last two years are shown.}
-
-\item{quantiles}{Vector indicating the quantiles to be displayed.}
 }
 \value{
-A seasonal plot by site
+A seasonal plot of an specific species-site request.
 }
 \description{
 Seasonal plots with quantiles for LFMC data

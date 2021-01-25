@@ -1,16 +1,15 @@
 #' Heatmap plots for LFMC data
 #'
-#' @param variable String indicating the variable to be graphed.
 #' @param speciesCode Integer indicating the species code.
 #' @param siteCode Integer indicating the site code.
 #' @param period String indicating if LFMC values are shown on a monthly or a fortnightly basis.
 #'
 #' @examples
 #' \dontrun{
-#'    heatmapLFMC(variable = "LFMC", speciesCode = 5, siteCode = 50, period = "Month")
+#'    heatmapLFMC(speciesCode = 5, siteCode = 50, period = "Month")
 #' }
 #'
-#' @return A heatmap by species and site
+#' @return A heatmap of an specific species-site request.
 
 heatmapLFMC <- function(speciesCode = 1, siteCode = 1, period = "Fortnight") {
 

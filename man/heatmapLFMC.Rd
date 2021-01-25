@@ -4,15 +4,9 @@
 \alias{heatmapLFMC}
 \title{Heatmap plots for LFMC data}
 \usage{
-heatmapLFMC(
-  variable = "LFMC",
-  speciesCode = 1,
-  siteCode = 1,
-  period = "Fortnight"
-)
+heatmapLFMC(speciesCode = 1, siteCode = 1, period = "Fortnight")
 }
 \arguments{
-\item{speciesCode}{Integer indicating the species code.}
 
 \item{speciesCode}{Integer indicating the species code.}
 
@@ -21,14 +15,14 @@ heatmapLFMC(
 \item{period}{String indicating if LFMC values are shown on a monthly or a fortnightly basis.}
 }
 \value{
-A heatmap by species and site
+A heatmap of an specific species-site request.
 }
 \description{
 Heatmap plots for LFMC data
 }
 \examples{
 \dontrun{
-   heatmapLFMC(variable = "LFMC", speciesCode = 5, siteCode = 50, period = "Month")
+   heatmapLFMC(speciesCode = 5, siteCode = 50, period = "Month")
 }
 
 }

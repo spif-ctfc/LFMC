@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette shows how to generate seasonal plots of LFMC values. 
+This vignette shows how to generate heatmap and seasonal plots of LFMC values. 
 
 ## Libraries
 
@@ -33,13 +33,14 @@ spCodes <- c(1, 2) # Salvia rosmarinus and Quercus coccifera
 siteCodes <- c(7, 8)
 ```
 
+
 ## Generate seasonal plots per species by site
 
 ```{r message=FALSE, warning=FALSE}
 for(sp in spCodes) {
   for(site in siteCodes) {
     p <- seasonalPlot(speciesCode = sp, siteCode = site, period = "Fortnight",
-                      MOutliers = T, AOutliers = F, plotCurrentYear = T, df = T)
+                      MOutliers = T, AOutliers = F, plotCurrentYear = T)
     
     # Plot style
     p <- p +  theme_light() 
