@@ -1,18 +1,17 @@
 #' Heatmap plots for LFMC data
 #'
-#' @param variable String indicating the variable to be graphed.
 #' @param speciesCode Integer indicating the species code.
 #' @param siteCode Integer indicating the site code.
 #' @param period String indicating if LFMC values are shown on a monthly or a fortnightly basis.
 #'
 #' @examples
 #' \dontrun{
-#'    heatmapLFMC(variable = "LFMC", speciesCode = 5, siteCode = 50, period = "Month")
+#'    heatmapLFMC(speciesCode = 5, siteCode = 50, period = "Month")
 #' }
 #'
-#' @return A heatmap by species and site
+#' @return A heatmap of an specific species-site request.
 
-heatmapLFMC <- function(variable = "LFMC", speciesCode = 1, siteCode = 1, period = "Fortnight") {
+heatmapLFMC <- function(speciesCode = 1, siteCode = 1, period = "Fortnight") {
 
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   rs <- DBI::dbSendQuery(
@@ -62,7 +61,7 @@ heatmapLFMC <- function(variable = "LFMC", speciesCode = 1, siteCode = 1, period
   df$Year = as.factor(df$Year)
 
   # heatmap
-  p <- ggplot2::ggplot(df, ggplot2::aes(PeriodLabel, Year, fill = df[[variable]]))
+  p <- ggplot2::ggplot(df, ggplot2::aes(PeriodLabel, Year, fill = LFMC))
   # Axis titles
   p <- p + ggplot2::labs(x = "", y = "")
   # Plot title

@@ -3,7 +3,6 @@
 #' @param speciesCode Integer indicating the species code.
 #' @param siteCode Integer or a list indicating site codes.
 #' @param period String indicating if LFMC values are shown by month or fortnight.
-#' @param quantiles Vector indicating the quantiles to be displayed.
 #' @param MOutliers Logical indicating if manually identified outliers are excluded.
 #' @param AOutliers Logical indicating if additive outliers are excluded.
 #' @param plotCurrentYear Logical indicating if data from the last two years are shown.
@@ -16,11 +15,11 @@
 #'    seasonalPlot(speciesCode = 1, siteCode = 5, period = "Month")
 #' }
 #'
-#' @return A seasonal plot by site
+#' @return A seasonal plot of an specific species-site request.
 
 
 seasonalPlot <- function(speciesCode = 1, siteCode = 1, period = "Fortnight",
-                         MOutliers = T, AOutliers = F, plotCurrentYear = F, df = T) {
+                         MOutliers = T, AOutliers = F, plotCurrentYear = F) {
 
   lfmc_db <- DBI::dbConnect(RSQLite::SQLite(), get("lfmcdbfile"))
   rs <- DBI::dbSendQuery(
@@ -117,6 +116,5 @@ seasonalPlot <- function(speciesCode = 1, siteCode = 1, period = "Fortnight",
                         size = 5, stroke = 1, shape = 1, colour = "red", show.legend = F)
   }
   return(g)
-
   return(dfSp)
 }
