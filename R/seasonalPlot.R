@@ -16,6 +16,9 @@
 #' }
 #'
 #' @return A seasonal plot of an specific species-site request.
+#'
+#' @export
+#'
 
 
 seasonalPlot <- function(speciesCode = 1, siteCode = 1, period = "Fortnight",

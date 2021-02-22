@@ -7,7 +7,6 @@
 heatmapLFMC(speciesCode = 1, siteCode = 1, period = "Fortnight")
 }
 \arguments{
-
 \item{speciesCode}{Integer indicating the species code.}
 
 \item{siteCode}{Integer indicating the site code.}
