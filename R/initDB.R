@@ -17,7 +17,11 @@
 initDB <- function(file, overwrite = FALSE) {
   if(!endsWith(file, ".sqlite")) file = paste0(file, ".sqlite")
   if(file.exists(file)) {
-    if(!overwrite) stop(paste0("Database file '", file, "' already exists. Set 'overwrite = TRUE' to force overwriting the database."))
+    if(!overwrite)
+      stop(
+        paste0(
+          "Database file '", file, "' already exists. Set 'overwrite = TRUE' to force overwriting the database.")
+        )
     unlink(file)
     cat(paste0("Database file '", file, "' overwritten.\n"))
   } else {
@@ -72,9 +76,10 @@ initDB <- function(file, overwrite = FALSE) {
 
   # Populate sites, species, and sites_species tables
 
-  DBI::dbAppendTable(lfmc_db, "sites", LFMC:::sitesTable)
-  DBI::dbAppendTable(lfmc_db, "species", LFMC:::speciesTable)
-  DBI::dbAppendTable(lfmc_db, "sites_species", LFMC:::sitespeciesTable)
+  load("R/sysData.rda")
+  DBI::dbAppendTable(lfmc_db, "sites", sitesTable)
+  DBI::dbAppendTable(lfmc_db, "species", speciesTable)
+  DBI::dbAppendTable(lfmc_db, "sites_species", sitespeciesTable)
 
   lfmc <- DBI::dbSendStatement(
   lfmc_db,
@@ -107,19 +112,6 @@ initDB <- function(file, overwrite = FALSE) {
   )
   DBI::dbClearResult(phenology)
 
-  soil_temp <- DBI::dbSendStatement(
-  lfmc_db,
-  "CREATE TABLE soil_temperature(
-  SensorCode TEXT PRIMARY KEY,
-  SamplingSiteCode INTEGER,
-  Date NUMERIC, Time NUMERIC,
-  Temperature REAL,
-  FOREIGN KEY(SamplingSiteCode)
-  REFERENCES sites(SamplingSiteCode)
-  )"
-  )
-  DBI::dbClearResult(soil_temp)
-
   tdr <- DBI::dbSendStatement(
   lfmc_db,
   "CREATE TABLE tdr_sensor
@@ -129,23 +121,21 @@ initDB <- function(file, overwrite = FALSE) {
   )
   DBI::dbClearResult(tdr)
 
-  soil_moist <- DBI::dbSendStatement(
+  soil_measurements <- DBI::dbSendStatement(
   lfmc_db,
-  "CREATE TABLE soil_moisture
+  "CREATE TABLE soil_measurements
   (SMCode TEXT PRIMARY KEY,
   SensorCode TEXT,
   Date NUMERIC, Time NUMERIC,
   Moisture REAL,
+  Temperature REAL,
   FOREIGN KEY(SensorCode)
   REFERENCES sites(tdr_sensor)
   )"
   )
-  DBI::dbClearResult(soil_moist)
+  DBI::dbClearResult(soil_measurements)
 
   DBI::dbDisconnect(lfmc_db)
 
   setDBpath(file)
 }
-
-
-
