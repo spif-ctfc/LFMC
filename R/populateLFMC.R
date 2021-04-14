@@ -63,7 +63,8 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
   if (!("SampleCode" %in% names(varmapping))) stop ("Please supply mapping for 'SampleCode'")
   if (!("SpeciesCode" %in% names(varmapping))) stop ("Please supply mapping for 'SpeciesCode'")
 
-  if(!varmapping[["Date"]] %in% names(lfmc)) stop (paste0("Date variable '", varmapping[["Date"]], "' not found in input data frame. Check mapping."))
+  if(!varmapping[["Date"]] %in% names(lfmc))
+    stop (paste0("Date variable '", varmapping[["Date"]], "' not found in input data frame. Check mapping."))
 
   dates = lfmc[[varmapping[["Date"]]]]
   if (class(dates) != "Date") {
@@ -120,7 +121,22 @@ populateLFMC <- function(lfmc, dateIni = NULL, dateFin = NULL, dateFormat = "%Y-
     else stop(paste0("DryStem variable '", varmapping[["DryStem"]], "' not found in input data frame. Check mapping."))
   }
 
+  if("DryLeaf" %in% names(varmapping)) {
+    if(varmapping[["DryLeaf"]] %in% names(lfmc)) lfmc_df[["DryLeaf"]] = as.numeric(lfmc[[varmapping[["DryLeaf"]]]])
+    else stop(paste0("DryLeaf variable '", varmapping[["DryLeaf"]], "' not found in input data frame. Check mapping."))
+  }
+
   lfmc_df[["LeafStemRatio"]] = lfmc_df[["DryLeaf"]] / lfmc_df[["DryStem"]]
+
+  if("ManualOutlier" %in% names(varmapping)) {
+    if(varmapping[["ManualOutlier"]] %in% names(lfmc)) lfmc_df[["ManualOutlier"]] = lfmc[[varmapping[["ManualOutlier"]]]]
+    else stop(paste0("ManualOutlier variable '", varmapping[["ManualOutlier"]], "' not found in input data frame. Check mapping."))
+  }
+
+  if("AdditiveOutlier" %in% names(varmapping)) {
+    if(varmapping[["AdditiveOutlier"]] %in% names(lfmc)) lfmc_df[["AdditiveOutlier"]] = lfmc[[varmapping[["AdditiveOutlier"]]]]
+    else stop(paste0("AdditiveOutlier variable '", varmapping[["AdditiveOutlier"]], "' not found in input data frame. Check mapping."))
+  }
 
   if("PhenologyCode" %in% names(varmapping)) {
     if(varmapping[["PhenologyCode"]] %in% names(lfmc)) lfmc_df[["PhenologyCode"]] = lfmc[[varmapping[["PhenologyCode"]]]]
